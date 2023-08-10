@@ -1,4 +1,4 @@
-use std::{f32::consts::TAU, ops::RangeInclusive};
+use std::{f32::consts::PI, ops::RangeInclusive};
 
 use crate::util::remap_range;
 
@@ -13,7 +13,7 @@ impl<'a> Knob<'a> {
         Self {
             value,
             default: 0.5,
-            range: 0.0..=1.0,
+            range: -1.0..=1.0,
             size: 50.0,
         }
     }
@@ -52,15 +52,15 @@ impl<'a> egui::Widget for Knob<'a> {
             let drag_position = res.interact_pointer_pos().unwrap() + res.drag_delta();
             let drag_direction = drag_position - center;
 
-            if drag_direction.length_sq() > 5.0 {
+            if drag_direction.length() > inner_radius {
                 let angle = drag_direction.y.atan2(drag_direction.x);
-                *self.value = remap_range(angle, -TAU..=TAU, self.range.clone());
+                *self.value = remap_range(angle, -PI..=PI, self.range.clone());
                 res.mark_changed();
             }
         }
 
         // Draw value line
-        let angle = remap_range(*self.value, self.range.clone(), -TAU..=TAU);
+        let angle = remap_range(*self.value, self.range.clone(), -PI..=PI);
         let dir = egui::vec2(angle.cos(), angle.sin());
         let line_start = center + dir * (inner_radius + offset_3d.abs().max_elem());
         let line_end = center + dir * outer_radius;
