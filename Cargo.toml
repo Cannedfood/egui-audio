@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 atomic-traits = { version = "0.3.0", optional = true }
+eframe = "0.22.0"
+egui = "0.22.0"

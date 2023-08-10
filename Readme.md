@@ -20,8 +20,6 @@ A collection of egui widgets useful for audio applications.
 
 ### Controls
 
-TODO
-
 #### Fader
 
 TODO
@@ -34,7 +32,7 @@ TODO
 
 TODO
 
-#### Atomic*
+#### Atomic\*
 
 *Requires the `atomic-traits` feature.*
 
