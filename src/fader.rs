@@ -1,5 +1,7 @@
 use std::ops::RangeInclusive;
 
+use crate::util::remap_range;
+
 #[derive(Debug)]
 pub struct Fader<'a> {
     pub value:   &'a mut f32,
@@ -23,6 +25,7 @@ impl<'a> egui::Widget for Fader<'a> {
             egui::vec2(50.0, 150.0) * self.scale,
             egui::Sense::click_and_drag(),
         );
+        let handle_height = 20.0;
 
         // Handle input
         if res.double_clicked() {
@@ -30,7 +33,7 @@ impl<'a> egui::Widget for Fader<'a> {
             res.mark_changed();
         }
         else if res.dragged() {
-            let delta = res.drag_delta().y / rect.height();
+            let delta = res.drag_delta().y / (rect.height() - handle_height);
             *self.value = (*self.value - delta).clamp(*self.range.start(), *self.range.end());
             res.mark_changed();
         }
@@ -43,9 +46,13 @@ impl<'a> egui::Widget for Fader<'a> {
             ui.style().visuals.extreme_bg_color,
         );
 
-        let handle_height = 20.0;
-        let handle_rect = egui::Rect::from_min_size(
-            rect.min + egui::vec2(0.0, (1.0 - *self.value) * (rect.height() - handle_height)),
+        let handle_rect = egui::Rect::from_center_size(
+            rect.center_top()
+                + egui::vec2(
+                    0.0,
+                    remap_range(*self.value, self.range, rect.height() - handle_height..=0.0)
+                        + handle_height * 0.5,
+                ),
             egui::vec2(rect.width(), handle_height),
         );
 
