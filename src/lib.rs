@@ -4,3 +4,5 @@ pub mod util;
 
 #[cfg(feature = "atomic-traits")]
 pub mod atomic_wrapper;
+
+pub mod db_wrapper;
