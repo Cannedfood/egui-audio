@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use egui_audio::util::{from_db_deadzone, to_db_deadzone};
+use crate::util::{from_db_deadzone, to_db_deadzone};
 
 pub struct AsDbWrapper<'a> {
     pub original: &'a mut f32,

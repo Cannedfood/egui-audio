@@ -1,5 +1,3 @@
-mod db_wrapper;
-
 use egui_audio::{fader::Fader, knob::Knob};
 
 fn main() {
