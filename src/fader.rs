@@ -60,8 +60,7 @@ impl<'a> Fader<'a> {
 impl<'a> egui::Widget for Fader<'a> {
     fn ui(self, ui: &mut egui::Ui) -> egui::Response {
         ui.with_layout(egui::Layout::top_down_justified(egui::Align::Min), |ui| {
-            ui.set_max_width(self.size.x);
-            ui.set_min_width(self.size.x);
+            ui.set_width(self.size.x);
 
             if self.convert_to_db {
                 *self.value = to_db_deadzone(*self.value, *self.range.start());

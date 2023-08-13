@@ -9,7 +9,7 @@ fn main() {
             ui.horizontal(|ui| {
                 for (volume, _pan) in &mut faders {
                     ui.vertical(|ui| {
-                        ui.add(Knob::pan(_pan));
+                        ui.add(Knob::pan(_pan).label("pan"));
                         ui.add(Fader::volume(volume).range(-32.0..=0.0).label("volume"));
                     });
                 }

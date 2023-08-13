@@ -6,11 +6,12 @@ use std::{
 use crate::util::remap_range;
 
 pub struct Knob<'a> {
-    pub value: &'a mut f32,
-    pub default: f32,
-    pub range: RangeInclusive<f32>,
-    pub size: f32,
-    pub angle_offset: f32,
+    value: &'a mut f32,
+    default: f32,
+    range: RangeInclusive<f32>,
+    size: f32,
+    angle_offset: f32,
+    label: Option<String>,
 }
 impl<'a> Knob<'a> {
     pub fn pan(value: &'a mut f32) -> Self {
@@ -20,70 +21,106 @@ impl<'a> Knob<'a> {
             range: -1.0..=1.0,
             size: 50.0,
             angle_offset: -PI / 2.0, // 0.0 is at the top
+            label: None,
+        }
+    }
+
+    pub fn default(self, default: f32) -> Self {
+        Self { default, ..self }
+    }
+
+    pub fn range(self, range: RangeInclusive<f32>) -> Self {
+        Self { range, ..self }
+    }
+
+    pub fn size(self, size: f32) -> Self {
+        Self { size, ..self }
+    }
+
+    pub fn angle_offset(self, angle_offset: f32) -> Self {
+        Self {
+            angle_offset,
+            ..self
+        }
+    }
+
+    pub fn label(self, label: impl Into<String>) -> Self {
+        Self {
+            label: Some(label.into()),
+            ..self
         }
     }
 }
 impl<'a> egui::Widget for Knob<'a> {
     fn ui(self, ui: &mut egui::Ui) -> egui::Response {
-        let (rect, mut res) = ui.allocate_at_least(
-            egui::vec2(self.size, self.size),
-            egui::Sense::click_and_drag(),
-        );
+        ui.with_layout(egui::Layout::top_down_justified(egui::Align::Min), |ui| {
+            ui.set_width(self.size);
 
-        let visuals = ui.style().interact(&res);
+            let (rect, mut res) = ui.allocate_at_least(
+                egui::vec2(self.size, self.size),
+                egui::Sense::click_and_drag(),
+            );
 
-        let offset_3d = egui::vec2(0.0, -2.0);
-        let center = rect.center();
-        let outer_radius = rect.size().min_elem() / 2.0;
-        let inner_radius = rect.size().min_elem() / 3.0;
+            let visuals = ui.style().interact(&res);
 
-        ui.painter()
-            .circle(center, outer_radius, visuals.bg_fill, visuals.bg_stroke);
-        ui.painter()
-            .circle_filled(center + offset_3d, inner_radius, visuals.weak_bg_fill);
-        ui.painter().circle(
-            center + offset_3d,
-            inner_radius,
-            visuals.bg_fill,
-            visuals.fg_stroke,
-        );
+            let offset_3d = egui::vec2(0.0, -2.0);
+            let center = rect.center();
+            let outer_radius = rect.size().min_elem() / 2.0;
+            let inner_radius = rect.size().min_elem() / 3.0;
 
-        // Handle input
-        if res.double_clicked() {
-            *self.value = self.default;
-            res.mark_changed();
-        }
-        else if res.dragged() {
-            let drag_position = res.interact_pointer_pos().unwrap() + res.drag_delta();
-            let drag_direction = drag_position - center;
+            ui.painter()
+                .circle(center, outer_radius, visuals.bg_fill, visuals.bg_stroke);
+            ui.painter()
+                .circle_filled(center + offset_3d, inner_radius, visuals.weak_bg_fill);
+            ui.painter().circle(
+                center + offset_3d,
+                inner_radius,
+                visuals.bg_fill,
+                visuals.fg_stroke,
+            );
 
-            if drag_direction.length() > inner_radius {
-                let angle =
-                    (drag_direction.y.atan2(drag_direction.x) + TAU + self.angle_offset) % TAU;
-                *self.value = remap_range(angle, 0.0..=TAU, self.range.clone());
+            // Handle input
+            if res.double_clicked() {
+                *self.value = self.default;
                 res.mark_changed();
             }
-        }
+            else if res.dragged() {
+                let drag_position = res.interact_pointer_pos().unwrap() + res.drag_delta();
+                let drag_direction = drag_position - center;
 
-        // Draw value line
-        let angle = remap_range(*self.value, self.range.clone(), 0.0..=TAU);
-        let dir = egui::vec2(
-            (angle - self.angle_offset).cos(),
-            (angle - self.angle_offset).sin(),
-        );
-        let line_start = center + dir * (inner_radius + offset_3d.abs().max_elem());
-        let line_end = center + dir * outer_radius;
-        ui.painter()
-            .line_segment([line_start, line_end], visuals.fg_stroke);
+                if drag_direction.length() > inner_radius {
+                    let angle =
+                        (drag_direction.y.atan2(drag_direction.x) + TAU + self.angle_offset) % TAU;
+                    *self.value = remap_range(angle, 0.0..=TAU, self.range.clone());
+                    res.mark_changed();
+                }
+            }
 
-        ui.painter().text(
-            center + offset_3d,
-            egui::Align2::CENTER_CENTER,
-            format!("{:.2}", *self.value),
-            egui::FontId::proportional(inner_radius * 0.5),
-            visuals.text_color(),
-        );
+            // Draw value line
+            let angle = remap_range(*self.value, self.range.clone(), 0.0..=TAU);
+            let dir = egui::vec2(
+                (angle - self.angle_offset).cos(),
+                (angle - self.angle_offset).sin(),
+            );
+            let line_start = center + dir * (inner_radius + offset_3d.abs().max_elem());
+            let line_end = center + dir * outer_radius;
+            ui.painter()
+                .line_segment([line_start, line_end], visuals.fg_stroke);
 
-        res
+            ui.painter().text(
+                center + offset_3d,
+                egui::Align2::CENTER_CENTER,
+                format!("{:.2}", *self.value),
+                egui::FontId::proportional(inner_radius * 0.5),
+                visuals.text_color(),
+            );
+
+            if let Some(label) = self.label {
+                ui.label(label);
+            }
+
+            res
+        })
+        .inner
     }
 }
