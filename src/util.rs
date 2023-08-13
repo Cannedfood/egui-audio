@@ -20,7 +20,7 @@ pub fn from_db(value: f32) -> f32 {
     10.0f32.powf(value / 20.0)
 }
 pub fn from_db_deadzone(value: f32, deadzone_db: f32) -> f32 {
-    if value < deadzone_db {
+    if value <= deadzone_db {
         0.0
     }
     else {
