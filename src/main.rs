@@ -1,5 +1,8 @@
 mod db_wrapper;
 
+use std::ops::DerefMut;
+
+use db_wrapper::AsDbWrapperTrait;
 use egui_audio::{fader::Fader, knob::Knob};
 
 fn main() {
@@ -12,7 +15,7 @@ fn main() {
                 for (volume, _pan) in &mut faders {
                     ui.vertical(|ui| {
                         ui.add(Knob::pan(_pan));
-                        ui.add(Fader::volume(volume));
+                        ui.add(Fader::volume(volume).with_range(-32.0..=0.0));
                     });
                 }
             });
