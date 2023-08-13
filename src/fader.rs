@@ -11,6 +11,7 @@ pub struct Fader<'a> {
     pub range: RangeInclusive<f32>,
     pub size: Vec2,
     pub convert_to_db: bool,
+    pub show_value: bool,
 }
 impl<'a> Fader<'a> {
     pub fn volume(value: &'a mut f32) -> Self {
@@ -20,6 +21,7 @@ impl<'a> Fader<'a> {
             range: -32.0..=0.0,
             size: Vec2::new(50.0, 150.0),
             convert_to_db: true,
+            show_value: false,
         }
     }
 
@@ -33,6 +35,17 @@ impl<'a> Fader<'a> {
 
     pub fn with_size(self, size: Vec2) -> Self {
         Self { size, ..self }
+    }
+
+    pub fn convert_to_db(self, convert_to_db: bool) -> Self {
+        Self {
+            convert_to_db,
+            ..self
+        }
+    }
+
+    pub fn show_value(self, show_value: bool) -> Self {
+        Self { show_value, ..self }
     }
 }
 impl<'a> egui::Widget for Fader<'a> {
@@ -83,18 +96,21 @@ impl<'a> egui::Widget for Fader<'a> {
             visuals.bg_fill,
             visuals.fg_stroke,
         );
-        ui.painter().text(
-            handle_rect.center(),
-            egui::Align2::CENTER_CENTER,
-            if self.convert_to_db {
-                format!("{:.1}db", self.value)
-            }
-            else {
-                format!("{:.1}", self.value)
-            },
-            egui::FontId::proportional(handle_rect.height() - 4.0),
-            visuals.text_color(),
-        );
+
+        if self.show_value {
+            ui.painter().text(
+                handle_rect.center(),
+                egui::Align2::CENTER_CENTER,
+                if self.convert_to_db {
+                    format!("{:.1}db", self.value)
+                }
+                else {
+                    format!("{:.1}", self.value)
+                },
+                egui::FontId::proportional(handle_rect.height() - 4.0),
+                visuals.text_color(),
+            );
+        }
 
         if self.convert_to_db {
             *self.value = from_db_deadzone(*self.value, *self.range.start());
