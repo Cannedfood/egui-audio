@@ -1,4 +1,7 @@
-use std::{f32::consts::PI, ops::RangeInclusive};
+use std::{
+    f32::consts::{PI, TAU},
+    ops::RangeInclusive,
+};
 
 use crate::util::remap_range;
 
@@ -7,14 +10,16 @@ pub struct Knob<'a> {
     pub default: f32,
     pub range: RangeInclusive<f32>,
     pub size: f32,
+    pub angle_offset: f32,
 }
 impl<'a> Knob<'a> {
     pub fn pan(value: &'a mut f32) -> Self {
         Self {
             value,
-            default: 0.5,
+            default: 0.0,
             range: -1.0..=1.0,
             size: 50.0,
+            angle_offset: -PI / 2.0, // 0.0 is at the top
         }
     }
 }
@@ -53,15 +58,19 @@ impl<'a> egui::Widget for Knob<'a> {
             let drag_direction = drag_position - center;
 
             if drag_direction.length() > inner_radius {
-                let angle = drag_direction.y.atan2(drag_direction.x);
-                *self.value = remap_range(angle, -PI..=PI, self.range.clone());
+                let angle =
+                    (drag_direction.y.atan2(drag_direction.x) + TAU + self.angle_offset) % TAU;
+                *self.value = remap_range(angle, 0.0..=TAU, self.range.clone());
                 res.mark_changed();
             }
         }
 
         // Draw value line
-        let angle = remap_range(*self.value, self.range.clone(), -PI..=PI);
-        let dir = egui::vec2(angle.cos(), angle.sin());
+        let angle = remap_range(*self.value, self.range.clone(), 0.0..=TAU);
+        let dir = egui::vec2(
+            (angle - self.angle_offset).cos(),
+            (angle - self.angle_offset).sin(),
+        );
         let line_start = center + dir * (inner_radius + offset_3d.abs().max_elem());
         let line_end = center + dir * outer_radius;
         ui.painter()
