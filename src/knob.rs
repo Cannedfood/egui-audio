@@ -85,14 +85,27 @@ impl<'a> egui::Widget for Knob<'a> {
                 res.mark_changed();
             }
             else if res.dragged() {
-                let drag_position = res.interact_pointer_pos().unwrap() + res.drag_delta();
-                let drag_direction = drag_position - center;
+                let start_position = res.interact_pointer_pos().unwrap() - res.drag_delta();
+                let close_to_center = (start_position - center).length() < outer_radius * 0.5;
 
-                if drag_direction.length() > inner_radius {
-                    let angle =
-                        (drag_direction.y.atan2(drag_direction.x) + TAU + self.angle_offset) % TAU;
-                    *self.value = remap_range(angle, 0.0..=TAU, self.range.clone());
+                if close_to_center {
+                    let delta = res.drag_delta().y / rect.height()
+                        * (*self.range.end() - *self.range.start()).abs();
+                    *self.value =
+                        (*self.value - delta).clamp(*self.range.start(), *self.range.end());
                     res.mark_changed();
+                }
+                else {
+                    let drag_position = res.interact_pointer_pos().unwrap() + res.drag_delta();
+                    let drag_direction = drag_position - center;
+
+                    if drag_direction.length() > inner_radius {
+                        let angle =
+                            (drag_direction.y.atan2(drag_direction.x) + TAU + self.angle_offset)
+                                % TAU;
+                        *self.value = remap_range(angle, 0.0..=TAU, self.range.clone());
+                        res.mark_changed();
+                    }
                 }
             }
 
