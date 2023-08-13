@@ -17,7 +17,7 @@ impl<'a> Fader<'a> {
         Self {
             value,
             default: 0.5,
-            range: 0.0..=1.0,
+            range: -32.0..=0.0,
             size: Vec2::new(50.0, 150.0),
             convert_to_db: true,
         }

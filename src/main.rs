@@ -1,8 +1,5 @@
 mod db_wrapper;
 
-use std::ops::DerefMut;
-
-use db_wrapper::AsDbWrapperTrait;
 use egui_audio::{fader::Fader, knob::Knob};
 
 fn main() {
