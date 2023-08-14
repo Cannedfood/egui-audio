@@ -2,7 +2,7 @@ use std::ops::RangeInclusive;
 
 use egui::Vec2;
 
-use crate::util::{from_db_deadzone, remap_range, to_db_deadzone};
+use crate::util::{from_db_deadzone, to_db_deadzone};
 
 #[derive(Debug)]
 pub struct Fader<'a> {
@@ -93,7 +93,7 @@ impl<'a> egui::Widget for Fader<'a> {
                 rect.center_top()
                     + egui::vec2(
                         0.0,
-                        remap_range(
+                        egui::remap(
                             *self.value,
                             self.range.clone(),
                             rect.height() - handle_height..=0.0,

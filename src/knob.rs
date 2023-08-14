@@ -3,8 +3,6 @@ use std::{
     ops::RangeInclusive,
 };
 
-use crate::util::remap_range;
-
 pub struct Knob<'a> {
     value: &'a mut f32,
     default: f32,
@@ -103,14 +101,14 @@ impl<'a> egui::Widget for Knob<'a> {
                         let angle =
                             (drag_direction.y.atan2(drag_direction.x) + TAU + self.angle_offset)
                                 % TAU;
-                        *self.value = remap_range(angle, 0.0..=TAU, self.range.clone());
+                        *self.value = egui::remap(angle, 0.0..=TAU, self.range.clone());
                         res.mark_changed();
                     }
                 }
             }
 
             // Draw value line
-            let angle = remap_range(*self.value, self.range.clone(), 0.0..=TAU);
+            let angle = egui::remap(*self.value, self.range.clone(), 0.0..=TAU);
             let dir = egui::vec2(
                 (angle - self.angle_offset).cos(),
                 (angle - self.angle_offset).sin(),
