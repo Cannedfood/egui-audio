@@ -1,15 +1,17 @@
-pub mod fader;
-pub mod knob;
-pub mod util;
+mod fader;
+mod knob;
+mod util;
 
 #[cfg(feature = "atomic-traits")]
-pub mod atomic_wrapper;
+mod atomic_wrapper;
 
-pub mod db_wrapper;
+mod db_wrapper;
+mod envelope;
 
 #[cfg(feature = "atomic-traits")]
 pub use atomic_wrapper::*;
 pub use db_wrapper::*;
+pub use envelope::*;
 pub use fader::*;
 pub use knob::*;
 pub use util::*;
