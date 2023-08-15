@@ -9,12 +9,24 @@ pub use waveform_mipmap::WaveformMipmap;
 use crate::TimeCursor;
 
 pub struct Waveform<'a> {
-    pub data:   &'a waveform_data::WaveformData,
+    pub data: &'a waveform_data::WaveformData,
     pub cursor: Option<&'a mut TimeCursor>,
+    pub pixels_per_point: f32,
 }
 impl<'a> Waveform<'a> {
     pub fn new(data: &'a waveform_data::WaveformData) -> Self {
-        Self { data, cursor: None }
+        Self {
+            data,
+            cursor: None,
+            pixels_per_point: 10.0,
+        }
+    }
+
+    pub fn pixels_per_point(self, pixels_per_point: f32) -> Self {
+        Self {
+            pixels_per_point,
+            ..self
+        }
     }
 
     pub fn cursor(self, cursor: &'a mut TimeCursor) -> Self {
@@ -77,7 +89,7 @@ impl<'a> egui::Widget for Waveform<'a> {
         }
 
         painter.add(self.data.get_outline(
-            10.0, // Pixels per point
+            self.pixels_per_point,
             rect,
             cursor.time_range.clone(),
             ui.style().visuals.widgets.noninteractive.fg_stroke,
