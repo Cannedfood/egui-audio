@@ -104,8 +104,18 @@ impl<'a> Waveform<'a> {
         self
     }
 
+    pub fn entries(mut self, e: impl IntoIterator<Item = Entry<'a>>) -> Self {
+        self.data.extend(e);
+        self
+    }
+
     pub fn marker(mut self, m: Marker) -> Self {
         self.markers.push(m);
+        self
+    }
+
+    pub fn markers(mut self, m: impl IntoIterator<Item = Marker>) -> Self {
+        self.markers.extend(m);
         self
     }
 }
