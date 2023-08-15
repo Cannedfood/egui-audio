@@ -10,7 +10,7 @@ impl WaveformSpectrum {
             let step_factor = (end_frequency / start_frequency).powf(1.0 / steps as f32);
 
             let mut f = start_frequency;
-            (0..steps).map(f)
+            todo!()
         };
 
         let planner = rustfft::FftPlanner::new();
