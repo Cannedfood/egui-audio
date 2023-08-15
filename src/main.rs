@@ -32,12 +32,26 @@ fn main() {
             ui.add(
                 egui_audio::Waveform::default()
                     .entry(egui_audio::Entry::from(&waveform))
-                    .marker(egui_audio::Marker {
-                        start: 0.5,
-                        end: Some(1.0),
-                        text: "Fun times".into(),
-                        ..Default::default()
-                    })
+                    .marker(
+                        egui_audio::Marker::from_range(0.0..1.0)
+                            .label("Red Marker")
+                            .color(egui::Color32::RED),
+                    )
+                    .marker(
+                        egui_audio::Marker::from_range(5.0..6.0)
+                            .label("Yellow Marker")
+                            .color(egui::Color32::YELLOW),
+                    )
+                    .marker(
+                        egui_audio::Marker::from_range(2.0..2.1)
+                            .label("Blue Marker")
+                            .color(egui::Color32::BLUE),
+                    )
+                    .marker(
+                        egui_audio::Marker::from_range(8.0..8.3)
+                            .label("Green Marker")
+                            .color(egui::Color32::GREEN),
+                    )
                     .cursor(&mut cursor),
             )
         });

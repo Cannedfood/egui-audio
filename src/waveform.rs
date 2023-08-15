@@ -68,16 +68,41 @@ impl Marker {
         }
     }
 
-    pub fn from_range(range: Range<f32>) -> Self {
+    pub fn from_start_end(start: f32, end: f32) -> Self {
         Self {
-            start: range.start,
-            end: Some(range.end),
+            start,
+            end: Some(end),
             ..Default::default()
         }
     }
 
+    pub fn from_range(range: Range<f32>) -> Self {
+        Self::from_start_end(range.start, range.end)
+    }
+
+    pub fn from_tuple(range: (f32, f32)) -> Self {
+        Self::from_start_end(range.0, range.1)
+    }
+
     pub fn label(mut self, text: impl Into<String>) -> Self {
         self.text = text.into();
+        self
+    }
+
+    pub fn color(mut self, color: impl Into<egui::Color32>) -> Self {
+        let c: egui::Color32 = color.into();
+        self.stroke.color = c;
+        self.fill = egui::Color32::from_rgba_unmultiplied(c.r(), c.g(), c.b(), 0x1);
+        self
+    }
+
+    pub fn fill_color(mut self, color: impl Into<egui::Color32>) -> Self {
+        self.fill = color.into();
+        self
+    }
+
+    pub fn stroke(mut self, stroke: impl Into<egui::Stroke>) -> Self {
+        self.stroke = stroke.into();
         self
     }
 
