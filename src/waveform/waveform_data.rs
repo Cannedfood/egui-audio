@@ -7,7 +7,6 @@ pub struct WaveformData {
     pub num_samples: usize,
     pub mipmaps: Vec<super::WaveformMipmap>,
 }
-
 impl WaveformData {
     pub fn calculate(samples: &[f32], sample_rate: u32) -> Self {
         let mut mipmaps = Vec::new();

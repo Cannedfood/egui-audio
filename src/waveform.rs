@@ -2,6 +2,7 @@ use egui::remap;
 
 mod waveform_data;
 mod waveform_mipmap;
+mod waveform_spectrum;
 
 pub use waveform_data::WaveformData;
 pub use waveform_mipmap::WaveformMipmap;
@@ -9,12 +10,17 @@ pub use waveform_mipmap::WaveformMipmap;
 use crate::TimeCursor;
 
 pub struct Waveform<'a> {
-    pub data:   &'a waveform_data::WaveformData,
-    pub cursor: Option<&'a mut TimeCursor>,
+    pub waveform: &'a waveform_data::WaveformData,
+    pub spectrum: Option<&'a waveform_spectrum::WaveformSpectrum>,
+    pub cursor:   Option<&'a mut TimeCursor>,
 }
 impl<'a> Waveform<'a> {
     pub fn new(data: &'a waveform_data::WaveformData) -> Self {
-        Self { data, cursor: None }
+        Self {
+            waveform: data,
+            spectrum: None,
+            cursor:   None,
+        }
     }
 
     pub fn cursor(self, cursor: &'a mut TimeCursor) -> Self {
@@ -27,7 +33,7 @@ impl<'a> Waveform<'a> {
 impl<'a> egui::Widget for Waveform<'a> {
     fn ui(self, ui: &mut egui::Ui) -> egui::Response {
         // Set up parameters
-        let waveform = self.data;
+        let waveform = self.waveform;
 
         let mut fallback_cursor = TimeCursor::from(0.0..waveform.len_seconds());
         let cursor: &mut TimeCursor = self.cursor.unwrap_or(&mut fallback_cursor);
@@ -76,7 +82,7 @@ impl<'a> egui::Widget for Waveform<'a> {
             );
         }
 
-        painter.add(self.data.get_outline(
+        painter.add(self.waveform.get_outline(
             10.0, // Pixels per point
             rect,
             cursor.time_range.clone(),
