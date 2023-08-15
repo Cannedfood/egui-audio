@@ -29,7 +29,17 @@ fn main() {
             ui.heading("Envelope");
             ui.add(egui_audio::Envelope::new(&mut control_points));
             ui.heading("Waveform");
-            ui.add(egui_audio::Waveform::new(&waveform).cursor(&mut cursor))
+            ui.add(
+                egui_audio::Waveform::default()
+                    .entry(egui_audio::Entry::from(&waveform))
+                    .marker(egui_audio::Marker {
+                        start: 0.5,
+                        end: Some(1.0),
+                        text: "Fun times".into(),
+                        ..Default::default()
+                    })
+                    .cursor(&mut cursor),
+            )
         });
     })
     .expect("Failed to open window");

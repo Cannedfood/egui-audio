@@ -20,8 +20,43 @@ impl TimeCursor {
         }
     }
 
+    pub fn clamp(&self, range: Range<f32>) -> Range<f32> {
+        let start = range
+            .start
+            .clamp(self.time_range.start, self.time_range.end);
+        let end = range.end.clamp(self.time_range.start, self.time_range.end);
+
+        start..end
+    }
+
+    pub fn overlaps(&self, range: Range<f32>) -> bool {
+        range.start < self.time_range.end && range.end > self.time_range.start
+    }
+
     pub fn time_range_inclusive(&self) -> RangeInclusive<f32> {
         self.time_range.start..=self.time_range.end
+    }
+
+    pub fn time_range_rect(&self, rect: egui::Rect, time_range: Range<f32>) -> egui::Rect {
+        let x_start = egui::remap(
+            time_range.start,
+            self.time_range_inclusive(),
+            rect.x_range(),
+        );
+        let x_end = egui::remap(time_range.end, self.time_range_inclusive(), rect.x_range());
+
+        egui::Rect::from_x_y_ranges(x_start..=x_end, rect.y_range())
+    }
+
+    pub fn time_range_rect_clamped(&self, rect: egui::Rect, time_range: Range<f32>) -> egui::Rect {
+        let x_start = egui::remap_clamp(
+            time_range.start,
+            self.time_range_inclusive(),
+            rect.x_range(),
+        );
+        let x_end = egui::remap_clamp(time_range.end, self.time_range_inclusive(), rect.x_range());
+
+        egui::Rect::from_x_y_ranges(x_start..=x_end, rect.y_range())
     }
 
     pub fn zoom_to(&mut self, to: f32, amount: f32) {
