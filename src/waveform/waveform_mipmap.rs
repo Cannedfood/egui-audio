@@ -8,6 +8,11 @@ pub struct WaveformMipmap {
 }
 
 impl WaveformMipmap {
+    pub fn simplify(&mut self, max_cost: f32) {
+        simplify_path(&mut self.positive_peaks, max_cost * self.points_per_second);
+        simplify_path(&mut self.negative_peaks, max_cost * self.points_per_second);
+    }
+
     pub fn with_capacity(len: usize, points_per_second: f32) -> Self {
         Self {
             points_per_second,
@@ -150,4 +155,34 @@ fn point_range_helper(points: &[egui::Vec2], range: std::ops::Range<f32>) -> &[e
         .unwrap_or(points.len() - 1);
 
     &points[start..=end]
+}
+
+fn cross(a: egui::Vec2, b: egui::Vec2) -> f32 {
+    a.x * b.y - a.y * b.x
+}
+
+fn triangle_area_2(p: egui::Vec2, left: egui::Vec2, right: egui::Vec2) -> f32 {
+    cross(left - p, right - p)
+}
+
+fn simplify_path(points: &mut Vec<egui::Vec2>, max_area_error: f32) {
+    assert!(points.len() > 3);
+
+    let max_cost_2 = max_area_error;
+
+    let mut last_kept_point = points[0];
+    let mut current_index = 1;
+    for i in 1..points.len() - 1 {
+        let keep = max_cost_2 > triangle_area_2(points[i], last_kept_point, points[i + 1]).abs();
+
+        if keep {
+            last_kept_point = points[i];
+            points[current_index] = points[i];
+            current_index += 1;
+        }
+    }
+    points[current_index] = *points.last().unwrap();
+    current_index += 1;
+
+    points.shrink_to(current_index);
 }
