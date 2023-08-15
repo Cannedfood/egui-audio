@@ -1,3 +1,5 @@
+use std::ops::Range;
+
 use egui::remap;
 
 mod waveform_data;
@@ -59,6 +61,26 @@ impl Default for Marker {
     }
 }
 impl Marker {
+    pub fn from_position(start: f32) -> Self {
+        Self {
+            start,
+            ..Default::default()
+        }
+    }
+
+    pub fn from_range(range: Range<f32>) -> Self {
+        Self {
+            start: range.start,
+            end: Some(range.end),
+            ..Default::default()
+        }
+    }
+
+    pub fn label(mut self, text: impl Into<String>) -> Self {
+        self.text = text.into();
+        self
+    }
+
     pub fn end(&self) -> f32 {
         self.end.unwrap_or(self.start)
     }
