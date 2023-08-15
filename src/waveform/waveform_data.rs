@@ -19,7 +19,9 @@ impl WaveformData {
         ));
         loop {
             let last_mipmap = mipmaps.last().unwrap();
-            if last_mipmap.len() < 128 || last_mipmap.len() / 2 <= shrink_factor.get() {
+            if last_mipmap.len() / shrink_factor.get() < 256
+                || last_mipmap.len() / 2 <= shrink_factor.get()
+            {
                 break;
             }
 

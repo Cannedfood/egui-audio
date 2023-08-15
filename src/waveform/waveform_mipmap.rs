@@ -137,18 +137,17 @@ impl WaveformMipmap {
 
 fn point_range_helper(points: &[egui::Vec2], range: std::ops::Range<f32>) -> &[egui::Vec2] {
     // TODO: Optimize this using binary search or point density
-    let start = points
+    let start = match points.binary_search_by(|p| p.x.partial_cmp(&range.start).unwrap()) {
+        Err(a) => a,
+        Ok(a) => a,
+    }
+    .saturating_sub(1);
+
+    let end = points[start..]
         .iter()
-        .enumerate()
-        .take_while(|(_, p)| p.x < range.start)
-        .last()
-        .map_or(0, |(i, _)| i);
-    let end = points
-        .iter()
-        .enumerate()
-        .skip(start)
-        .find(|(_, p)| p.x > range.end)
-        .map_or(points.len() - 1, |(i, _)| i);
+        .position(|p| p.x > range.end)
+        .map(|v| v + start)
+        .unwrap_or(points.len() - 1);
 
     &points[start..=end]
 }
