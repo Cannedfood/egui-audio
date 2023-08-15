@@ -9,13 +9,13 @@ pub struct WaveformData {
 }
 
 impl WaveformData {
-    pub fn calculate(samples: &[f32], sample_rate: u32) -> Self {
+    pub fn calculate(samples: &[f32], sample_rate: usize) -> Self {
         let mut mipmaps = Vec::new();
         let shrink_factor: NonZeroUsize = 2.try_into().unwrap();
 
         mipmaps.push(super::WaveformMipmap::from_samples(
             samples,
-            sample_rate as usize,
+            sample_rate,
             shrink_factor,
         ));
         loop {
@@ -28,7 +28,7 @@ impl WaveformData {
         }
 
         Self {
-            sample_rate: sample_rate as usize,
+            sample_rate,
             num_samples: samples.len(),
             mipmaps,
         }
@@ -86,7 +86,7 @@ impl WaveformData {
     pub fn calculate_into_async(
         output: Arc<RwLock<Option<Self>>>,
         samples: Vec<f32>,
-        sample_rate: u32,
+        sample_rate: usize,
         ctx: Option<egui::Context>,
     ) {
         std::thread::spawn(move || {
