@@ -8,24 +8,30 @@ pub struct WaveformData {
     pub mipmaps: Vec<super::WaveformMipmap>,
 }
 impl WaveformData {
-    pub fn calculate(samples: &[f32], sample_rate: usize, mipmap_scale: usize) -> Self {
+    pub fn calculate(
+        samples: &[f32],
+        sample_rate: usize,
+        first_mipmap_scale: usize,
+        mipmap_scale: usize,
+    ) -> Self {
         let mut mipmaps = Vec::new();
-        let shrink_factor: NonZeroUsize = mipmap_scale.try_into().unwrap();
+        let first_mipmap_scale = NonZeroUsize::new(first_mipmap_scale).unwrap();
+        let mipmap_scale = NonZeroUsize::new(mipmap_scale).unwrap();
 
         mipmaps.push(super::WaveformMipmap::from_samples(
             samples,
             sample_rate,
-            shrink_factor,
+            first_mipmap_scale,
         ));
         loop {
             let last_mipmap = mipmaps.last().unwrap();
-            if last_mipmap.len() / shrink_factor.get() < 256
-                || last_mipmap.len() / 2 <= shrink_factor.get()
+            if last_mipmap.len() / mipmap_scale.get() < 256
+                || last_mipmap.len() / 2 <= mipmap_scale.get()
             {
                 break;
             }
 
-            mipmaps.push(last_mipmap.shrink(shrink_factor));
+            mipmaps.push(last_mipmap.shrink(mipmap_scale));
         }
 
         Self {
@@ -88,11 +94,12 @@ impl WaveformData {
         output: Arc<RwLock<Option<Self>>>,
         samples: Vec<f32>,
         sample_rate: usize,
+        initial_mipmap_scale: usize,
         mipmap_scale: usize,
         ctx: Option<egui::Context>,
     ) {
         std::thread::spawn(move || {
-            let result = Self::calculate(&samples, sample_rate, mipmap_scale);
+            let result = Self::calculate(&samples, sample_rate, initial_mipmap_scale, mipmap_scale);
             *output.write().unwrap() = Some(result);
             if let Some(ctx) = ctx {
                 ctx.request_repaint();
