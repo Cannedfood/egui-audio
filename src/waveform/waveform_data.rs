@@ -28,10 +28,6 @@ impl WaveformData {
             mipmaps.push(last_mipmap.shrink(shrink_factor));
         }
 
-        for m in &mut mipmaps {
-            m.simplify(1.0);
-        }
-
         Self {
             sample_rate,
             num_samples: samples.len(),
