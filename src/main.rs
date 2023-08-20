@@ -12,7 +12,7 @@ fn main() {
     ];
 
     let waveform =
-        egui_audio::WaveformData::calculate(&generate_example_waveform(48000, 10.0), 48000, 2);
+        egui_audio::WaveformData::calculate(&generate_example_waveform(48000, 10.0), 48000, 2, 2);
     let mut cursor = egui_audio::TimeCursor::default();
 
     eframe::run_simple_native("audio_demo", Default::default(), move |ctx, _frame| {
