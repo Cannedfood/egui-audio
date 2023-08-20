@@ -114,6 +114,11 @@ impl Marker {
     }
 }
 
+#[derive(Default)]
+pub struct WaveformResponse {
+    pub clicked: Option<egui::Vec2>,
+}
+
 pub struct Waveform<'a> {
     pub data: Vec<Entry<'a>>,
     pub markers: Vec<Marker>,
@@ -164,10 +169,8 @@ impl<'a> Waveform<'a> {
         self.markers.extend(m);
         self
     }
-}
 
-impl<'a> egui::Widget for Waveform<'a> {
-    fn ui(self, ui: &mut egui::Ui) -> egui::Response {
+    pub fn show(self, ui: &mut egui::Ui) -> egui::InnerResponse<WaveformResponse> {
         // Set up parameters
         let entries_range = Iterator::chain(
             self.data.iter().map(Entry::time_range),
@@ -255,6 +258,14 @@ impl<'a> egui::Widget for Waveform<'a> {
             }
         }
 
-        response
+        let mut ret = WaveformResponse::default();
+        if response.clicked() {
+            if let Some(p) = response.interact_pointer_pos() {
+                let y = egui::remap(p.y, rect.y_range(), -1.0..=1.0);
+                let x = egui::remap(p.x, rect.x_range(), cursor.time_range_inclusive());
+                ret.clicked = Some(egui::vec2(x, y));
+            }
+        }
+        egui::InnerResponse::new(ret, response)
     }
 }

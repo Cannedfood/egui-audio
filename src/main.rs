@@ -37,31 +37,30 @@ fn main() {
                     .speed(0.01)
                     .suffix("s"),
             );
-            ui.add(
-                egui_audio::Waveform::default()
-                    .entry(egui_audio::Entry::from(&waveform).with_position(waveform_offset))
-                    .marker(
-                        egui_audio::Marker::from_range(0.0..1.0)
-                            .label("Red Marker")
-                            .color(egui::Color32::RED),
-                    )
-                    .marker(
-                        egui_audio::Marker::from_range(5.0..6.0)
-                            .label("Yellow Marker")
-                            .color(egui::Color32::YELLOW),
-                    )
-                    .marker(
-                        egui_audio::Marker::from_range(2.0..2.1)
-                            .label("Blue Marker")
-                            .color(egui::Color32::BLUE),
-                    )
-                    .marker(
-                        egui_audio::Marker::from_range(8.0..8.3)
-                            .label("Green Marker")
-                            .color(egui::Color32::GREEN),
-                    )
-                    .cursor(&mut cursor),
-            )
+            egui_audio::Waveform::default()
+                .entry(egui_audio::Entry::from(&waveform).with_position(waveform_offset))
+                .marker(
+                    egui_audio::Marker::from_range(0.0..1.0)
+                        .label("Red Marker")
+                        .color(egui::Color32::RED),
+                )
+                .marker(
+                    egui_audio::Marker::from_range(5.0..6.0)
+                        .label("Yellow Marker")
+                        .color(egui::Color32::YELLOW),
+                )
+                .marker(
+                    egui_audio::Marker::from_range(2.0..2.1)
+                        .label("Blue Marker")
+                        .color(egui::Color32::BLUE),
+                )
+                .marker(
+                    egui_audio::Marker::from_range(8.0..8.3)
+                        .label("Green Marker")
+                        .color(egui::Color32::GREEN),
+                )
+                .cursor(&mut cursor)
+                .show(ui);
         });
     })
     .expect("Failed to open window");
