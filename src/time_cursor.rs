@@ -29,6 +29,11 @@ impl TimeCursor {
         start..end
     }
 
+    pub fn clamp_with_offset(&self, range: Range<f32>, offset: f32) -> Range<f32> {
+        let r = self.clamp((range.start + offset)..(range.end + offset));
+        (r.start - offset)..(r.end - offset)
+    }
+
     pub fn overlaps(&self, range: Range<f32>) -> bool {
         range.start < self.time_range.end && range.end > self.time_range.start
     }

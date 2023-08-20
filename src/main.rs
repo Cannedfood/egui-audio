@@ -14,6 +14,7 @@ fn main() {
     let waveform =
         egui_audio::WaveformData::calculate(&generate_example_waveform(48000, 10.0), 48000, 2, 2);
     let mut cursor = egui_audio::TimeCursor::default();
+    let mut waveform_offset = 0.0;
 
     eframe::run_simple_native("audio_demo", Default::default(), move |ctx, _frame| {
         egui::CentralPanel::default().show(ctx, |ui| {
@@ -29,9 +30,16 @@ fn main() {
             ui.heading("Envelope");
             ui.add(egui_audio::Envelope::new(&mut control_points));
             ui.heading("Waveform");
+            ui.label("offset");
+            ui.add(
+                egui::DragValue::new(&mut waveform_offset)
+                    .clamp_range(-waveform.len_seconds()..=waveform.len_seconds())
+                    .speed(0.01)
+                    .suffix("s"),
+            );
             ui.add(
                 egui_audio::Waveform::default()
-                    .entry(egui_audio::Entry::from(&waveform))
+                    .entry(egui_audio::Entry::from(&waveform).with_position(waveform_offset))
                     .marker(
                         egui_audio::Marker::from_range(0.0..1.0)
                             .label("Red Marker")

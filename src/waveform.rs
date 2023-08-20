@@ -11,7 +11,7 @@ pub use waveform_mipmap::WaveformMipmap;
 use crate::TimeCursor;
 
 pub struct Entry<'a> {
-    pub offset:   f32,
+    pub position: f32,
     pub waveform: &'a WaveformData,
     pub stroke:   egui::Stroke,
 }
@@ -20,22 +20,21 @@ impl<'a> Entry<'a> {
         self.waveform.len_seconds()
     }
 
-    pub fn start(&self) -> f32 {
-        self.offset
-    }
-
-    pub fn end(&self) -> f32 {
-        self.offset + self.duration()
-    }
-
     pub fn time_range(&self) -> std::ops::Range<f32> {
-        self.start()..self.end()
+        self.position..(self.duration() + self.position)
+    }
+
+    pub fn with_position(self, seconds: f32) -> Self {
+        Self {
+            position: seconds,
+            ..self
+        }
     }
 }
 impl<'a> From<&'a WaveformData> for Entry<'a> {
     fn from(waveform: &'a WaveformData) -> Self {
         Self {
-            offset: 0.0,
+            position: 0.0,
             waveform,
             stroke: (1.0, egui::Color32::WHITE).into(),
         }
@@ -171,8 +170,8 @@ impl<'a> egui::Widget for Waveform<'a> {
     fn ui(self, ui: &mut egui::Ui) -> egui::Response {
         // Set up parameters
         let entries_range = Iterator::chain(
-            self.data.iter().map(|e| e.time_range()),
-            self.markers.iter().map(|m| m.time_range()),
+            self.data.iter().map(Entry::time_range),
+            self.markers.iter().map(Marker::time_range),
         )
         .fold(None, |a: Option<std::ops::Range<f32>>, b| {
             Some(match a {
@@ -230,7 +229,7 @@ impl<'a> egui::Widget for Waveform<'a> {
                 ui.painter_at(entry_rect).add(e.waveform.get_outline(
                     self.pixels_per_point,
                     entry_rect,
-                    cursor.clamp(e.time_range()),
+                    cursor.clamp_with_offset(0.0..e.duration(), e.position),
                     ui.style().visuals.widgets.noninteractive.fg_stroke,
                 ));
             }
