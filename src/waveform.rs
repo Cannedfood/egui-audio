@@ -1,6 +1,6 @@
 use std::ops::Range;
 
-use egui::remap;
+use egui::{remap, Modifiers};
 
 mod waveform_data;
 mod waveform_mipmap;
@@ -126,6 +126,7 @@ pub struct Waveform<'a> {
     pub markers: Vec<Marker>,
     pub cursor: Option<&'a mut TimeCursor>,
     pub pixels_per_point: f32,
+    pub zoom_modifier: egui::Modifiers,
 }
 impl<'a> Default for Waveform<'a> {
     fn default() -> Self {
@@ -134,6 +135,7 @@ impl<'a> Default for Waveform<'a> {
             markers: Vec::new(),
             cursor: None,
             pixels_per_point: 10.0,
+            zoom_modifier: Modifiers::NONE,
         }
     }
 }
@@ -141,6 +143,13 @@ impl<'a> Waveform<'a> {
     pub fn pixels_per_point(self, pixels_per_point: f32) -> Self {
         Self {
             pixels_per_point,
+            ..self
+        }
+    }
+
+    pub fn zoom_modifier(self, zoom_modifier: egui::Modifiers) -> Self {
+        Self {
+            zoom_modifier,
             ..self
         }
     }
@@ -203,10 +212,17 @@ impl<'a> Waveform<'a> {
             cursor.shift(-dx);
         }
 
-        if let Some(hover_pos) = response.hover_pos() {
-            let scrolled = ui.input_mut(|i| std::mem::replace(&mut i.scroll_delta.y, 0.0)) / 100.0;
+        if let Some(hover_pos) = ui.input(|i| {
+            if i.modifiers.matches(self.zoom_modifier) {
+                response.hover_pos()
+            }
+            else {
+                None
+            }
+        }) {
+            let zoomed = ui.input_mut(|i| std::mem::replace(&mut i.scroll_delta.y, 0.0)) / 100.0;
             let zoom_target = remap(hover_pos.x, rect.x_range(), cursor.time_range_inclusive());
-            cursor.zoom_to(zoom_target, scrolled);
+            cursor.zoom_to(zoom_target, zoomed);
         }
 
         // cursor.move_into_range(0.0..waveform.len_seconds());
