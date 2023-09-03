@@ -64,8 +64,7 @@ impl TimeCursor {
         egui::Rect::from_x_y_ranges(x_start..=x_end, rect.y_range())
     }
 
-    pub fn zoom_to(&mut self, to: f32, amount: f32) {
-        let factor = 2.0f32.powf(amount);
+    pub fn zoom_to(&mut self, to: f32, factor: f32) {
         self.time_range.start = ((self.time_range.start - to) * factor) + to;
         self.time_range.end = ((self.time_range.end - to) * factor) + to;
 

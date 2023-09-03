@@ -212,15 +212,8 @@ impl<'a> Waveform<'a> {
             cursor.shift(-dx);
         }
 
-        if let Some(hover_pos) = ui.input(|i| {
-            if i.modifiers.matches(self.zoom_modifier) {
-                response.hover_pos()
-            }
-            else {
-                None
-            }
-        }) {
-            let zoomed = ui.input_mut(|i| std::mem::replace(&mut i.scroll_delta.y, 0.0)) / 100.0;
+        if let Some(hover_pos) = response.hover_pos() {
+            let zoomed = ui.input(|i| i.zoom_delta());
             let zoom_target = remap(hover_pos.x, rect.x_range(), cursor.time_range_inclusive());
             cursor.zoom_to(zoom_target, zoomed);
         }
