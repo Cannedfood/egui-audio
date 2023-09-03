@@ -10,6 +10,7 @@ pub use waveform_mipmap::WaveformMipmap;
 
 use crate::TimeCursor;
 
+#[derive(Clone, Copy)]
 pub struct Entry<'a> {
     pub position: f32,
     pub waveform: &'a WaveformData,
@@ -41,6 +42,7 @@ impl<'a> From<&'a WaveformData> for Entry<'a> {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Marker {
     pub start: f32,
     pub end: Option<f32>,
@@ -114,7 +116,7 @@ impl Marker {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Clone, Copy)]
 pub struct WaveformResponse {
     pub clicked: Option<egui::Vec2>,
 }

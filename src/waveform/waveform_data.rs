@@ -6,6 +6,7 @@ pub struct WaveformData {
     pub sample_rate: usize,
     pub num_samples: usize,
     pub mipmaps: Vec<super::WaveformMipmap>,
+    pub min_max: (f32, f32),
 }
 impl WaveformData {
     pub fn calculate(
@@ -34,10 +35,24 @@ impl WaveformData {
             mipmaps.push(last_mipmap.shrink(mipmap_scale));
         }
 
+        let min_max = (
+            mipmaps[mipmaps.len() - 1]
+                .negative_peaks
+                .iter()
+                .map(|p| p.y)
+                .fold(std::f32::INFINITY, f32::min),
+            mipmaps[mipmaps.len() - 1]
+                .positive_peaks
+                .iter()
+                .map(|p| p.y)
+                .fold(std::f32::NEG_INFINITY, f32::max),
+        );
+
         Self {
             sample_rate,
             num_samples: samples.len(),
             mipmaps,
+            min_max,
         }
     }
 

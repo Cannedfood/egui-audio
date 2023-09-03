@@ -1,6 +1,6 @@
 use std::ops::{Range, RangeInclusive};
 
-#[derive(Clone, Debug)]
+#[derive(Debug, Clone)]
 pub struct TimeCursor {
     pub time_range: Range<f32>,
     pub min_size:   f32,
