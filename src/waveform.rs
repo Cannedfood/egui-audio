@@ -129,6 +129,8 @@ pub struct Waveform<'a> {
     pub cursor: Option<&'a mut TimeCursor>,
     pub pixels_per_point: f32,
     pub zoom_modifier: egui::Modifiers,
+    pub height: f32,
+    pub normalize: bool,
 }
 impl<'a> Default for Waveform<'a> {
     fn default() -> Self {
@@ -138,6 +140,8 @@ impl<'a> Default for Waveform<'a> {
             cursor: None,
             pixels_per_point: 10.0,
             zoom_modifier: Modifiers::NONE,
+            height: 200.0,
+            normalize: false,
         }
     }
 }
@@ -183,6 +187,16 @@ impl<'a> Waveform<'a> {
         self
     }
 
+    pub fn height(mut self, height: f32) -> Self {
+        self.height = height;
+        self
+    }
+
+    pub fn normalize(mut self, normalize: bool) -> Self {
+        self.normalize = normalize;
+        self
+    }
+
     pub fn show(self, ui: &mut egui::Ui) -> egui::InnerResponse<WaveformResponse> {
         // Set up parameters
         let entries_range = Iterator::chain(
@@ -202,7 +216,7 @@ impl<'a> Waveform<'a> {
         cursor.try_initialize(entries_range.clone());
 
         let (rect, response) = ui.allocate_at_least(
-            egui::vec2(ui.available_width(), 200.0),
+            egui::vec2(ui.available_width(), self.height),
             egui::Sense::click_and_drag(),
         );
         let painter = ui.painter_at(rect);
@@ -247,6 +261,7 @@ impl<'a> Waveform<'a> {
                     entry_rect,
                     cursor.clamp_with_offset(0.0..e.duration(), e.position),
                     ui.style().visuals.widgets.noninteractive.fg_stroke,
+                    self.normalize,
                 ));
             }
         }

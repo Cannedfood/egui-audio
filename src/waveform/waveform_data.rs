@@ -81,10 +81,24 @@ impl WaveformData {
         rect: egui::Rect,
         time_range: std::ops::Range<f32>,
         stroke: impl Into<egui::Stroke>,
+        normalize: bool,
     ) -> egui::epaint::PathShape {
         let desired_num_points = (rect.width() / pixels_per_point).ceil() as usize;
 
         let [max_points, min_points] = self.get_points(desired_num_points, time_range.clone());
+
+        let scale = if normalize {
+            let (min, max) = self.min_max;
+            if min.abs() > max.abs() {
+                1.0 / min
+            }
+            else {
+                1.0 / max
+            }
+        }
+        else {
+            1.0
+        };
 
         egui::epaint::PathShape::closed_line(
             max_points
@@ -94,7 +108,7 @@ impl WaveformData {
                 .map(|p| {
                     egui::pos2(
                         egui::remap(p.x, time_range.start..=time_range.end, rect.x_range()),
-                        egui::remap(p.y, 1.0..=-1.0, rect.y_range()),
+                        egui::remap(p.y * scale, 1.0..=-1.0, rect.y_range()),
                     )
                 })
                 .collect(),
