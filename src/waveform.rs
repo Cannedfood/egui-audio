@@ -1,6 +1,6 @@
 use std::ops::Range;
 
-use egui::{remap, Modifiers};
+use egui::{remap, vec2, Modifiers};
 
 mod waveform_data;
 mod waveform_mipmap;
@@ -119,6 +119,8 @@ impl Marker {
 #[derive(Default, Clone, Copy)]
 pub struct WaveformResponse {
     pub clicked: Option<egui::Vec2>,
+    pub dragged_to: Option<egui::Vec2>,
+    pub dragged_delta: Option<egui::Vec2>,
 }
 
 pub struct Waveform<'a> {
@@ -275,6 +277,17 @@ impl<'a> Waveform<'a> {
                 let y = egui::remap(p.y, rect.y_range(), -1.0..=1.0);
                 let x = egui::remap(p.x, rect.x_range(), cursor.time_range_inclusive());
                 ret.clicked = Some(egui::vec2(x, y));
+            }
+        }
+        if response.dragged() {
+            if let Some(p) = response.interact_pointer_pos() {
+                let y = egui::remap(p.y, rect.y_range(), -1.0..=1.0);
+                let x = egui::remap(p.x, rect.x_range(), cursor.time_range_inclusive());
+                ret.dragged_to = Some(egui::vec2(x, y));
+                ret.dragged_delta = Some(
+                    response.drag_delta() / rect.size()
+                        * vec2(1.0, cursor.time_range.end - cursor.time_range.start),
+                );
             }
         }
         egui::InnerResponse::new(ret, response)
