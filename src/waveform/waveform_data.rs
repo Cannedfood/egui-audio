@@ -2,6 +2,7 @@ use std::num::NonZeroUsize;
 use std::sync::Arc;
 use std::sync::RwLock;
 
+#[derive(Default)]
 pub struct WaveformData {
     pub sample_rate: usize,
     pub num_samples: usize,
