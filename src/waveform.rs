@@ -279,7 +279,7 @@ impl<'a> Waveform<'a> {
                 ret.clicked = Some(egui::vec2(x, y));
             }
         }
-        if response.dragged() {
+        if response.dragged_by(egui::PointerButton::Primary) {
             if let Some(p) = response.interact_pointer_pos() {
                 let y = egui::remap(p.y, rect.y_range(), -1.0..=1.0);
                 let x = egui::remap(p.x, rect.x_range(), cursor.time_range_inclusive());
