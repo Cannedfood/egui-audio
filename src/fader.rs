@@ -18,7 +18,7 @@ impl<'a> Fader<'a> {
     pub fn volume(value: &'a mut f32) -> Self {
         Self {
             value,
-            default: 0.5,
+            default: 0.0,
             range: -32.0..=0.0,
             size: Vec2::new(50.0, 150.0),
             convert_to_db: true,
