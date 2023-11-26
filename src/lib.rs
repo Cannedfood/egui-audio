@@ -1,5 +1,4 @@
 #![allow(dead_code)]
-#![feature(int_roundings)]
 
 mod fader;
 mod knob;
