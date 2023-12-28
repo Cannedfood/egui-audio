@@ -14,7 +14,7 @@ use crate::TimeCursor;
 pub struct Entry<'a> {
     pub position: f32,
     pub waveform: &'a WaveformData,
-    pub stroke:   egui::Stroke,
+    pub stroke:   Option<egui::Stroke>,
 }
 impl<'a> Entry<'a> {
     pub fn duration(&self) -> f32 {
@@ -37,7 +37,7 @@ impl<'a> From<&'a WaveformData> for Entry<'a> {
         Self {
             position: 0.0,
             waveform,
-            stroke: (1.0, egui::Color32::WHITE).into(),
+            stroke: None,
         }
     }
 }
@@ -256,13 +256,16 @@ impl<'a> Waveform<'a> {
         for e in self.data.iter() {
             if cursor.overlaps(e.time_range()) {
                 let entry_rect = cursor.time_range_rect_clamped(rect, e.time_range());
-                ui.painter_at(entry_rect).add(e.waveform.get_outline(
-                    self.pixels_per_point,
-                    entry_rect,
-                    cursor.clamp_with_offset(0.0..e.duration(), e.position),
-                    ui.style().visuals.widgets.noninteractive.fg_stroke,
-                    self.normalize,
-                ));
+                ui.painter_at(entry_rect).add(
+                    e.waveform.get_outline(
+                        self.pixels_per_point,
+                        entry_rect,
+                        cursor.clamp_with_offset(0.0..e.duration(), e.position),
+                        e.stroke
+                            .unwrap_or(ui.style().visuals.widgets.noninteractive.fg_stroke),
+                        self.normalize,
+                    ),
+                );
             }
         }
 
