@@ -10,6 +10,14 @@ pub use waveform_mipmap::WaveformMipmap;
 
 use crate::TimeCursor;
 
+// Backwards compatibility
+#[deprecated = "Use WaveformShape instead"]
+pub type WaveformData = WaveformShape;
+#[deprecated = "Use WaveformItem instead"]
+pub type Entry<'a> = WaveformItem<'a>;
+#[deprecated = "Use WaveformMarker instead"]
+pub type Marker = WaveformMarker;
+
 #[derive(Clone, Copy)]
 pub struct WaveformItem<'a> {
     pub position: f32,
