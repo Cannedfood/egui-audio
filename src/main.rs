@@ -12,7 +12,7 @@ fn main() {
     ];
 
     let waveform =
-        egui_audio::WaveformData::calculate(&generate_example_waveform(48000, 10.0), 48000, 2, 2);
+        egui_audio::WaveformShape::generate(&generate_example_waveform(48000, 10.0), 48000, 2, 2);
     let mut cursor = egui_audio::TimeCursor::default();
     let mut waveform_offset = 0.0;
 
@@ -38,26 +38,26 @@ fn main() {
                     .suffix("s"),
             );
             egui_audio::Waveform::default()
-                .entry(egui_audio::Entry::from(&waveform).with_position(waveform_offset))
+                .entry(egui_audio::WaveformItem::new(&waveform).with_position(waveform_offset))
                 .marker(
-                    egui_audio::Marker::from_range(0.0..1.0)
-                        .label("Red Marker")
-                        .color(egui::Color32::RED),
+                    egui_audio::WaveformMarker::from_range(0.0..1.0)
+                        .with_label("Red Marker")
+                        .with_color(egui::Color32::RED),
                 )
                 .marker(
-                    egui_audio::Marker::from_range(5.0..6.0)
-                        .label("Yellow Marker")
-                        .color(egui::Color32::YELLOW),
+                    egui_audio::WaveformMarker::from_range(5.0..6.0)
+                        .with_label("Yellow Marker")
+                        .with_color(egui::Color32::YELLOW),
                 )
                 .marker(
-                    egui_audio::Marker::from_range(2.0..2.1)
-                        .label("Blue Marker")
-                        .color(egui::Color32::BLUE),
+                    egui_audio::WaveformMarker::from_range(2.0..2.1)
+                        .with_label("Blue Marker")
+                        .with_color(egui::Color32::BLUE),
                 )
                 .marker(
-                    egui_audio::Marker::from_range(8.0..8.3)
-                        .label("Green Marker")
-                        .color(egui::Color32::GREEN),
+                    egui_audio::WaveformMarker::from_range(8.0..8.3)
+                        .with_label("Green Marker")
+                        .with_color(egui::Color32::GREEN),
                 )
                 .cursor(&mut cursor)
                 .show(ui);

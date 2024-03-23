@@ -3,14 +3,14 @@ use std::sync::Arc;
 use std::sync::RwLock;
 
 #[derive(Default)]
-pub struct WaveformData {
+pub struct WaveformShape {
     pub sample_rate: usize,
     pub num_samples: usize,
     pub mipmaps: Vec<super::WaveformMipmap>,
     pub min_max: (f32, f32),
 }
-impl WaveformData {
-    pub fn calculate(
+impl WaveformShape {
+    pub fn generate(
         samples: &[f32],
         sample_rate: usize,
         first_mipmap_scale: usize,
@@ -81,24 +81,11 @@ impl WaveformData {
         rect: egui::Rect,
         time_range: std::ops::Range<f32>,
         stroke: impl Into<egui::Stroke>,
-        normalize: bool,
+        scale_y: f32,
     ) -> egui::epaint::PathShape {
         let desired_num_points = (rect.width() / pixels_per_point).ceil() as usize;
 
         let [max_points, min_points] = self.get_points(desired_num_points, time_range.clone());
-
-        let scale = if normalize {
-            let (min, max) = self.min_max;
-            if min.abs() > max.abs() {
-                1.0 / min
-            }
-            else {
-                1.0 / max
-            }
-        }
-        else {
-            1.0
-        };
 
         egui::epaint::PathShape::closed_line(
             max_points
@@ -108,7 +95,7 @@ impl WaveformData {
                 .map(|p| {
                     egui::pos2(
                         egui::remap(p.x, time_range.start..=time_range.end, rect.x_range()),
-                        egui::remap(p.y * scale, 1.0..=-1.0, rect.y_range()),
+                        egui::remap(p.y * scale_y, 1.0..=-1.0, rect.y_range()),
                     )
                 })
                 .collect(),
@@ -129,7 +116,7 @@ impl WaveformData {
         ctx: Option<egui::Context>,
     ) {
         std::thread::spawn(move || {
-            let result = Self::calculate(&samples, sample_rate, initial_mipmap_scale, mipmap_scale);
+            let result = Self::generate(&samples, sample_rate, initial_mipmap_scale, mipmap_scale);
             *output.write().unwrap() = Some(result);
             if let Some(ctx) = ctx {
                 ctx.request_repaint();

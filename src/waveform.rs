@@ -5,18 +5,28 @@ use egui::{remap, vec2, Modifiers};
 mod waveform_data;
 mod waveform_mipmap;
 
-pub use waveform_data::WaveformData;
+pub use waveform_data::WaveformShape;
 pub use waveform_mipmap::WaveformMipmap;
 
 use crate::TimeCursor;
 
 #[derive(Clone, Copy)]
-pub struct Entry<'a> {
+pub struct WaveformItem<'a> {
     pub position: f32,
-    pub waveform: &'a WaveformData,
-    pub stroke:   Option<egui::Stroke>,
+    pub gain: f32,
+    pub waveform: &'a WaveformShape,
+    pub stroke: Option<egui::Stroke>,
 }
-impl<'a> Entry<'a> {
+impl<'a> WaveformItem<'a> {
+    pub fn new(waveform: &'a WaveformShape) -> Self {
+        Self {
+            position: 0.0,
+            gain: 1.0,
+            waveform,
+            stroke: None,
+        }
+    }
+
     pub fn duration(&self) -> f32 {
         self.waveform.len_seconds()
     }
@@ -31,26 +41,28 @@ impl<'a> Entry<'a> {
             ..self
         }
     }
-}
-impl<'a> From<&'a WaveformData> for Entry<'a> {
-    fn from(waveform: &'a WaveformData) -> Self {
+
+    pub fn with_stroke(self, stroke: impl Into<egui::Stroke>) -> Self {
         Self {
-            position: 0.0,
-            waveform,
-            stroke: None,
+            stroke: Some(stroke.into()),
+            ..self
         }
+    }
+
+    pub fn with_gain(self, gain: f32) -> Self {
+        Self { gain, ..self }
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct Marker {
+pub struct WaveformMarker {
     pub start: f32,
     pub end: Option<f32>,
     pub stroke: egui::Stroke,
     pub fill: egui::Color32,
     pub text: String,
 }
-impl Default for Marker {
+impl Default for WaveformMarker {
     fn default() -> Self {
         Self {
             start: 0.0,
@@ -61,7 +73,7 @@ impl Default for Marker {
         }
     }
 }
-impl Marker {
+impl WaveformMarker {
     pub fn from_position(start: f32) -> Self {
         Self {
             start,
@@ -85,24 +97,24 @@ impl Marker {
         Self::from_start_end(range.0, range.1)
     }
 
-    pub fn label(mut self, text: impl Into<String>) -> Self {
+    pub fn with_label(mut self, text: impl Into<String>) -> Self {
         self.text = text.into();
         self
     }
 
-    pub fn color(mut self, color: impl Into<egui::Color32>) -> Self {
+    pub fn with_color(mut self, color: impl Into<egui::Color32>) -> Self {
         let c: egui::Color32 = color.into();
         self.stroke.color = c;
         self.fill = egui::Color32::from_rgba_unmultiplied(c.r(), c.g(), c.b(), 0x1);
         self
     }
 
-    pub fn fill_color(mut self, color: impl Into<egui::Color32>) -> Self {
+    pub fn with_fill(mut self, color: impl Into<egui::Color32>) -> Self {
         self.fill = color.into();
         self
     }
 
-    pub fn stroke(mut self, stroke: impl Into<egui::Stroke>) -> Self {
+    pub fn with_stroke(mut self, stroke: impl Into<egui::Stroke>) -> Self {
         self.stroke = stroke.into();
         self
     }
@@ -124,13 +136,12 @@ pub struct WaveformResponse {
 }
 
 pub struct Waveform<'a> {
-    pub data: Vec<Entry<'a>>,
-    pub markers: Vec<Marker>,
+    pub data: Vec<WaveformItem<'a>>,
+    pub markers: Vec<WaveformMarker>,
     pub cursor: Option<&'a mut TimeCursor>,
     pub pixels_per_point: f32,
     pub zoom_modifier: egui::Modifiers,
     pub height: f32,
-    pub normalize: bool,
 }
 impl<'a> Default for Waveform<'a> {
     fn default() -> Self {
@@ -141,7 +152,6 @@ impl<'a> Default for Waveform<'a> {
             pixels_per_point: 10.0,
             zoom_modifier: Modifiers::NONE,
             height: 200.0,
-            normalize: false,
         }
     }
 }
@@ -167,22 +177,22 @@ impl<'a> Waveform<'a> {
         }
     }
 
-    pub fn entry(mut self, e: Entry<'a>) -> Self {
+    pub fn entry(mut self, e: WaveformItem<'a>) -> Self {
         self.data.push(e);
         self
     }
 
-    pub fn entries(mut self, e: impl IntoIterator<Item = Entry<'a>>) -> Self {
+    pub fn entries(mut self, e: impl IntoIterator<Item = WaveformItem<'a>>) -> Self {
         self.data.extend(e);
         self
     }
 
-    pub fn marker(mut self, m: Marker) -> Self {
+    pub fn marker(mut self, m: WaveformMarker) -> Self {
         self.markers.push(m);
         self
     }
 
-    pub fn markers(mut self, m: impl IntoIterator<Item = Marker>) -> Self {
+    pub fn markers(mut self, m: impl IntoIterator<Item = WaveformMarker>) -> Self {
         self.markers.extend(m);
         self
     }
@@ -192,16 +202,11 @@ impl<'a> Waveform<'a> {
         self
     }
 
-    pub fn normalize(mut self, normalize: bool) -> Self {
-        self.normalize = normalize;
-        self
-    }
-
     pub fn show(self, ui: &mut egui::Ui) -> egui::InnerResponse<WaveformResponse> {
         // Set up parameters
         let entries_range = Iterator::chain(
-            self.data.iter().map(Entry::time_range),
-            self.markers.iter().map(Marker::time_range),
+            self.data.iter().map(WaveformItem::time_range),
+            self.markers.iter().map(WaveformMarker::time_range),
         )
         .fold(None, |a: Option<std::ops::Range<f32>>, b| {
             Some(match a {
@@ -263,7 +268,7 @@ impl<'a> Waveform<'a> {
                         cursor.clamp_with_offset(0.0..e.duration(), e.position),
                         e.stroke
                             .unwrap_or(ui.style().visuals.widgets.noninteractive.fg_stroke),
-                        self.normalize,
+                        e.gain,
                     ),
                 );
             }
