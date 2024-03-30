@@ -227,9 +227,9 @@ dependencies = [
 
 [[package]]
 name = "async-executor"
-version = "1.8.0"
+version = "1.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17ae5ebefcc48e7452b4987947920dac9450be1110cadf34d1b8c116bdbaf97c"
+checksum = "10b3e585719c2358d2660232671ca8ca4ddb4be4ce8a1842d6c2dc8685303316"
 dependencies = [
  "async-lock 3.3.0",
  "async-task",
@@ -341,7 +341,7 @@ checksum = "30c5ef0ede93efbf733c1a727f3b6b5a1060bbedd5600183e66f6e4be4af0ec5"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn 2.0.57",
 ]
 
 [[package]]
@@ -376,7 +376,7 @@ checksum = "a507401cad91ec6a857ed5513a2073c82a9b9048762b885bb98655b306964681"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn 2.0.57",
 ]
 
 [[package]]
@@ -568,7 +568,7 @@ checksum = "4da9a32f3fed317401fa3c862968128267c3106685286e15d5aaa3d7389c2f60"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn 2.0.57",
 ]
 
 [[package]]
@@ -884,18 +884,18 @@ checksum = "9ea835d29036a4087793836fa931b08837ad5e957da9e23886b29586fb9b6650"
 
 [[package]]
 name = "ecolor"
-version = "0.27.0"
+version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c416b34b29e8f6b2492b5c80319cf9792d339550f0d75a54b53ed070045bbdeb"
+checksum = "fb152797942f72b84496eb2ebeff0060240e0bf55096c4525ffa22dd54722d86"
 dependencies = [
  "bytemuck",
 ]
 
 [[package]]
 name = "eframe"
-version = "0.27.0"
+version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "86811b20df847cfa73637020ee78de780407110f49785df2dea6741146ea5aac"
+checksum = "3bcc8e06df6f0a6cf09a3247ff7e85fdfffc28dda4fe5561e05314bf7618a918"
 dependencies = [
  "bytemuck",
  "cocoa",
@@ -927,9 +927,9 @@ dependencies = [
 
 [[package]]
 name = "egui"
-version = "0.27.0"
+version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8e20541e5d3da08cf817eb5c8a2bc4024f21aad7acf98de201442d6d76e0ecc"
+checksum = "6d1b8cc14b0b260aa6bd124ef12c8a94f57ffe8e40aa970f3db710c21bb945f3"
 dependencies = [
  "accesskit",
  "ahash",
@@ -949,9 +949,9 @@ dependencies = [
 
 [[package]]
 name = "egui-wgpu"
-version = "0.27.0"
+version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "25d1c9a6f17f48a75148e7a3db7cc0221b7261db577281267301f83d79d0834a"
+checksum = "04ee072f7cbd9e03ae4028db1c4a8677fbb4efc4b62feee6563763a6f041c88d"
 dependencies = [
  "bytemuck",
  "document-features",
@@ -967,9 +967,9 @@ dependencies = [
 
 [[package]]
 name = "egui-winit"
-version = "0.27.0"
+version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ff4fc01bc3617dba9280475e9ab2382015e298f401d2318c2a1d78c419b6dffe"
+checksum = "3733435d6788c760bb98ce4cb1b8b7a2d953a3a7b421656ba8b3e014019be3d0"
 dependencies = [
  "accesskit_winit",
  "arboard",
@@ -984,9 +984,9 @@ dependencies = [
 
 [[package]]
 name = "egui_glow"
-version = "0.27.0"
+version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "743380a1c0f1dbb7bfe29663ce62b10785adda51105c9bb4e544e2f9955b4958"
+checksum = "f933e9e64c4d074c78ce71785a5778f648453c2b2a3efd28eea189dac3f19c28"
 dependencies = [
  "bytemuck",
  "egui",
@@ -1000,9 +1000,9 @@ dependencies = [
 
 [[package]]
 name = "emath"
-version = "0.27.0"
+version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e87799f56edee11422267e1764dd0bf3fe1734888e8d2d0924a67b85f4998fbe"
+checksum = "555a7cbfcc52c81eb5f8f898190c840fa1c435f67f30b7ef77ce7cf6b7dcd987"
 dependencies = [
  "bytemuck",
 ]
@@ -1025,14 +1025,14 @@ checksum = "5c785274071b1b420972453b306eeca06acf4633829db4223b58a2a8c5953bc4"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn 2.0.57",
 ]
 
 [[package]]
 name = "epaint"
-version = "0.27.0"
+version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "392eccd6d6b13fadccc268f4f61d9363775ec5711ffdece2a79006d676920bcf"
+checksum = "bd63c37156e949bda80f7e39cc11508bc34840aecf52180567e67cdb2bf1a5fe"
 dependencies = [
  "ab_glyph",
  "ahash",
@@ -1177,7 +1177,7 @@ checksum = "1a5c6c585bc94aaf2c7b51dd4c2ba22680844aba4c687be581871a6f518c5742"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn 2.0.57",
 ]
 
 [[package]]
@@ -1841,7 +1841,7 @@ dependencies = [
  "proc-macro-crate 3.1.0",
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn 2.0.57",
 ]
 
 [[package]]
@@ -2008,9 +2008,9 @@ checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
 
 [[package]]
 name = "pin-project-lite"
-version = "0.2.13"
+version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8afb450f006bf6385ca15ef45d71d2288452bc3683ce2e2cacc0d18e4be60b58"
+checksum = "bda66fc9667c18cb2758a2ac84d1167245054bcf85d5d1aaa6923f45801bdd02"
 
 [[package]]
 name = "pin-utils"
@@ -2337,7 +2337,7 @@ checksum = "7eb0b34b42edc17f6b7cac84a52a1c5f0e1bb2227e997ca9011ea3dd34e8610b"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn 2.0.57",
 ]
 
 [[package]]
@@ -2348,7 +2348,7 @@ checksum = "0b2e6b945e9d3df726b65d6ee24060aff8e3533d431f677a9695db04eff9dfdb"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn 2.0.57",
 ]
 
 [[package]]
@@ -2490,9 +2490,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.55"
+version = "2.0.57"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "002a1b3dbf967edfafc32655d0f377ab0bb7b994aa1d32c8cc7e9b8bf3ebb8f0"
+checksum = "11a6ae1e52eb25aab8f3fb9fca13be982a373b8f1157ca14b897a825ba4a2d35"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2537,7 +2537,7 @@ checksum = "c61f3ba182994efc43764a46c018c347bc492c79f024e705f46567b418f6d4f7"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn 2.0.57",
 ]
 
 [[package]]
@@ -2627,7 +2627,7 @@ checksum = "34704c8d6ebcbc939824180af020566b01a7c01f80641264eba0999f6c2b6be7"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn 2.0.57",
 ]
 
 [[package]]
@@ -2770,7 +2770,7 @@ dependencies = [
  "once_cell",
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn 2.0.57",
  "wasm-bindgen-shared",
 ]
 
@@ -2804,7 +2804,7 @@ checksum = "e94f17b526d0a461a191c78ea52bbce64071ed5c04c9ffe424dcb38f74171bb7"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn 2.0.57",
  "wasm-bindgen-backend",
  "wasm-bindgen-shared",
 ]
@@ -3564,7 +3564,7 @@ checksum = "9ce1b18ccd8e73a9321186f97e46f9f04b778851177567b1975109d26a08d2a6"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn 2.0.57",
 ]
 
 [[package]]
