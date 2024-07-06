@@ -2,11 +2,11 @@ use egui::{vec2, Widget};
 
 #[derive(Clone, Debug)]
 pub struct ControlPoint {
-    pub softness: Option<f32>,
-    pub tangent: Option<egui::Vec2>,
-    pub position: egui::Vec2,
+    pub softness:   Option<f32>,
+    pub tangent:    Option<egui::Vec2>,
+    pub position:   egui::Vec2,
     pub guard_rail: bool,
-    pub default: Option<Box<ControlPoint>>,
+    pub default:    Option<Box<ControlPoint>>,
 }
 impl ControlPoint {
     pub fn new(position: egui::Vec2) -> Self {
@@ -35,9 +35,7 @@ pub struct Envelope<'a> {
     pub control_points: &'a mut Vec<ControlPoint>,
 }
 impl<'a> Envelope<'a> {
-    pub fn new(control_points: &'a mut Vec<ControlPoint>) -> Self {
-        Self { control_points }
-    }
+    pub fn new(control_points: &'a mut Vec<ControlPoint>) -> Self { Self { control_points } }
 }
 impl<'a> Widget for Envelope<'a> {
     fn ui(self, ui: &mut egui::Ui) -> egui::Response {

@@ -33,7 +33,7 @@ fn main() {
             ui.label("offset");
             ui.add(
                 egui::DragValue::new(&mut waveform_offset)
-                    .clamp_range(-waveform.len_seconds()..=waveform.len_seconds())
+                    .range(-waveform.len_seconds()..=waveform.len_seconds())
                     .speed(0.01)
                     .suffix("s"),
             );

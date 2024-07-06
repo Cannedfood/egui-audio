@@ -27,17 +27,11 @@ impl<'a> Fader<'a> {
         }
     }
 
-    pub fn default(self, default: f32) -> Self {
-        Self { default, ..self }
-    }
+    pub fn default(self, default: f32) -> Self { Self { default, ..self } }
 
-    pub fn range(self, range: RangeInclusive<f32>) -> Self {
-        Self { range, ..self }
-    }
+    pub fn range(self, range: RangeInclusive<f32>) -> Self { Self { range, ..self } }
 
-    pub fn size(self, size: Vec2) -> Self {
-        Self { size, ..self }
-    }
+    pub fn size(self, size: Vec2) -> Self { Self { size, ..self } }
 
     pub fn convert_to_db(self, convert_to_db: bool) -> Self {
         Self {
@@ -46,9 +40,7 @@ impl<'a> Fader<'a> {
         }
     }
 
-    pub fn show_value(self, show_value: bool) -> Self {
-        Self { show_value, ..self }
-    }
+    pub fn show_value(self, show_value: bool) -> Self { Self { show_value, ..self } }
 
     pub fn label(self, label: impl Into<String>) -> Self {
         Self {
@@ -113,7 +105,7 @@ impl<'a> egui::Widget for Fader<'a> {
                 ui.add(
                     egui::DragValue::new(self.value)
                         .speed(0.1)
-                        .clamp_range(self.range.clone())
+                        .range(self.range.clone())
                         .max_decimals(1)
                         .min_decimals(1)
                         .suffix("db"),

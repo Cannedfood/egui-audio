@@ -1,7 +1,5 @@
-use std::{
-    f32::consts::{PI, TAU},
-    ops::RangeInclusive,
-};
+use std::f32::consts::{PI, TAU};
+use std::ops::RangeInclusive;
 
 pub struct Knob<'a> {
     value: &'a mut f32,
@@ -23,17 +21,11 @@ impl<'a> Knob<'a> {
         }
     }
 
-    pub fn default(self, default: f32) -> Self {
-        Self { default, ..self }
-    }
+    pub fn default(self, default: f32) -> Self { Self { default, ..self } }
 
-    pub fn range(self, range: RangeInclusive<f32>) -> Self {
-        Self { range, ..self }
-    }
+    pub fn range(self, range: RangeInclusive<f32>) -> Self { Self { range, ..self } }
 
-    pub fn size(self, size: f32) -> Self {
-        Self { size, ..self }
-    }
+    pub fn size(self, size: f32) -> Self { Self { size, ..self } }
 
     pub fn angle_offset(self, angle_offset: f32) -> Self {
         Self {

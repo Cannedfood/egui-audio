@@ -6,7 +6,7 @@ where
     A: atomic_traits::Atomic<Type = T>,
 {
     original: &'a A,
-    value: T,
+    value:    T,
 }
 impl<'a, T, A> AtomicWrapper<'a, T, A>
 where
@@ -35,18 +35,14 @@ where
 {
     type Target = T;
 
-    fn deref(&self) -> &Self::Target {
-        &self.value
-    }
+    fn deref(&self) -> &Self::Target { &self.value }
 }
 impl<'a, T, A> DerefMut for AtomicWrapper<'a, T, A>
 where
     T: Copy + PartialEq,
     A: atomic_traits::Atomic<Type = T>,
 {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.value
-    }
+    fn deref_mut(&mut self) -> &mut Self::Target { &mut self.value }
 }
 
 pub trait AtomicWrapperTrait<'a, T, A>
@@ -61,7 +57,5 @@ where
     T: Copy + PartialEq,
     A: atomic_traits::Atomic<Type = T>,
 {
-    fn read_modify_write(&'a self) -> AtomicWrapper<'a, T, A> {
-        AtomicWrapper::new(self)
-    }
+    fn read_modify_write(&'a self) -> AtomicWrapper<'a, T, A> { AtomicWrapper::new(self) }
 }

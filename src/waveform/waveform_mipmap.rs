@@ -3,8 +3,8 @@ use std::num::NonZeroUsize;
 #[derive(Clone, Debug)]
 pub struct WaveformMipmap {
     pub points_per_second: f32,
-    pub positive_peaks: Vec<egui::Vec2>,
-    pub negative_peaks: Vec<egui::Vec2>,
+    pub positive_peaks:    Vec<egui::Vec2>,
+    pub negative_peaks:    Vec<egui::Vec2>,
 }
 
 impl WaveformMipmap {
@@ -157,9 +157,7 @@ fn point_range_helper(points: &[egui::Vec2], range: std::ops::Range<f32>) -> &[e
     &points[start..=end]
 }
 
-fn cross(a: egui::Vec2, b: egui::Vec2) -> f32 {
-    a.x * b.y - a.y * b.x
-}
+fn cross(a: egui::Vec2, b: egui::Vec2) -> f32 { a.x * b.y - a.y * b.x }
 
 fn triangle_area_2(p: egui::Vec2, left: egui::Vec2, right: egui::Vec2) -> f32 {
     cross(left - p, right - p)

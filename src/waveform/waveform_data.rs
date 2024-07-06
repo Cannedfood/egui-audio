@@ -1,13 +1,12 @@
 use std::num::NonZeroUsize;
-use std::sync::Arc;
-use std::sync::RwLock;
+use std::sync::{Arc, RwLock};
 
 #[derive(Default)]
 pub struct WaveformShape {
     pub sample_rate: usize,
     pub num_samples: usize,
-    pub mipmaps: Vec<super::WaveformMipmap>,
-    pub min_max: (f32, f32),
+    pub mipmaps:     Vec<super::WaveformMipmap>,
+    pub min_max:     (f32, f32),
 }
 impl WaveformShape {
     pub fn generate(
@@ -41,12 +40,12 @@ impl WaveformShape {
                 .negative_peaks
                 .iter()
                 .map(|p| p.y)
-                .fold(std::f32::INFINITY, f32::min),
+                .fold(f32::INFINITY, f32::min),
             mipmaps[mipmaps.len() - 1]
                 .positive_peaks
                 .iter()
                 .map(|p| p.y)
-                .fold(std::f32::NEG_INFINITY, f32::max),
+                .fold(f32::NEG_INFINITY, f32::max),
         );
 
         Self {
@@ -99,13 +98,11 @@ impl WaveformShape {
                     )
                 })
                 .collect(),
-            stroke,
+            stroke.into(),
         )
     }
 
-    pub fn len_seconds(&self) -> f32 {
-        self.num_samples as f32 / self.sample_rate as f32
-    }
+    pub fn len_seconds(&self) -> f32 { self.num_samples as f32 / self.sample_rate as f32 }
 
     pub fn calculate_into_async(
         output: Arc<RwLock<Option<Self>>>,

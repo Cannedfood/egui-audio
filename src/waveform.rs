@@ -21,9 +21,9 @@ pub type Marker = WaveformMarker;
 #[derive(Clone, Copy)]
 pub struct WaveformItem<'a> {
     pub position: f32,
-    pub gain: f32,
+    pub gain:     f32,
     pub waveform: &'a WaveformShape,
-    pub stroke: Option<egui::Stroke>,
+    pub stroke:   Option<egui::Stroke>,
 }
 impl<'a> WaveformItem<'a> {
     pub fn new(waveform: &'a WaveformShape) -> Self {
@@ -35,9 +35,7 @@ impl<'a> WaveformItem<'a> {
         }
     }
 
-    pub fn duration(&self) -> f32 {
-        self.waveform.len_seconds()
-    }
+    pub fn duration(&self) -> f32 { self.waveform.len_seconds() }
 
     pub fn time_range(&self) -> std::ops::Range<f32> {
         self.position..(self.duration() + self.position)
@@ -57,27 +55,25 @@ impl<'a> WaveformItem<'a> {
         }
     }
 
-    pub fn with_gain(self, gain: f32) -> Self {
-        Self { gain, ..self }
-    }
+    pub fn with_gain(self, gain: f32) -> Self { Self { gain, ..self } }
 }
 
 #[derive(Debug, Clone)]
 pub struct WaveformMarker {
-    pub start: f32,
-    pub end: Option<f32>,
+    pub start:  f32,
+    pub end:    Option<f32>,
     pub stroke: egui::Stroke,
-    pub fill: egui::Color32,
-    pub text: String,
+    pub fill:   egui::Color32,
+    pub text:   String,
 }
 impl Default for WaveformMarker {
     fn default() -> Self {
         Self {
-            start: 0.0,
-            end: None,
+            start:  0.0,
+            end:    None,
             stroke: (1.0, egui::Color32::RED).into(),
-            fill: egui::Color32::from_rgba_unmultiplied(0x22, 0x8, 0x8, 0x22),
-            text: String::new(),
+            fill:   egui::Color32::from_rgba_unmultiplied(0x22, 0x8, 0x8, 0x22),
+            text:   String::new(),
         }
     }
 }
@@ -97,13 +93,9 @@ impl WaveformMarker {
         }
     }
 
-    pub fn from_range(range: Range<f32>) -> Self {
-        Self::from_start_end(range.start, range.end)
-    }
+    pub fn from_range(range: Range<f32>) -> Self { Self::from_start_end(range.start, range.end) }
 
-    pub fn from_tuple(range: (f32, f32)) -> Self {
-        Self::from_start_end(range.0, range.1)
-    }
+    pub fn from_tuple(range: (f32, f32)) -> Self { Self::from_start_end(range.0, range.1) }
 
     pub fn with_label(mut self, text: impl Into<String>) -> Self {
         self.text = text.into();
@@ -127,13 +119,9 @@ impl WaveformMarker {
         self
     }
 
-    pub fn end(&self) -> f32 {
-        self.end.unwrap_or(self.start)
-    }
+    pub fn end(&self) -> f32 { self.end.unwrap_or(self.start) }
 
-    fn time_range(&self) -> std::ops::Range<f32> {
-        self.start..self.end()
-    }
+    fn time_range(&self) -> std::ops::Range<f32> { self.start..self.end() }
 }
 
 #[derive(Default, Clone, Copy)]
