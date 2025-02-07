@@ -239,9 +239,10 @@ impl<'a> Waveform<'a> {
 
         painter.rect(
             rect,
-            ui.style().visuals.widgets.noninteractive.rounding,
+            ui.style().visuals.widgets.noninteractive.corner_radius,
             ui.style().visuals.widgets.noninteractive.bg_fill,
             ui.style().visuals.widgets.noninteractive.bg_stroke,
+            egui::StrokeKind::Inside,
         );
 
         // Draw entry backgrounds

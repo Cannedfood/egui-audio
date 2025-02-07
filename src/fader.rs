@@ -77,7 +77,7 @@ impl<'a> egui::Widget for Fader<'a> {
 
             ui.painter().rect_filled(
                 egui::Rect::from_center_size(rect.center(), egui::vec2(5.0, rect.height())),
-                visuals.rounding,
+                visuals.corner_radius,
                 ui.style().visuals.extreme_bg_color,
             );
 
@@ -96,9 +96,10 @@ impl<'a> egui::Widget for Fader<'a> {
 
             ui.painter().rect(
                 handle_rect,
-                visuals.rounding,
+                visuals.corner_radius,
                 visuals.bg_fill,
                 visuals.fg_stroke,
+                egui::StrokeKind::Inside,
             );
 
             if self.show_value {

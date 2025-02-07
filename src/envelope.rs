@@ -49,7 +49,13 @@ impl<'a> Widget for Envelope<'a> {
 
         let painter = ui.painter();
         let visuals = ui.style().interact(&response);
-        painter.rect(rect, visuals.rounding, visuals.bg_fill, visuals.bg_stroke);
+        painter.rect(
+            rect,
+            visuals.corner_radius,
+            visuals.bg_fill,
+            visuals.bg_stroke,
+            egui::StrokeKind::Inside,
+        );
 
         for point in self.control_points.windows(2) {
             painter.line_segment(
