@@ -16,8 +16,8 @@ fn main() {
     let mut cursor = egui_audio::TimeCursor::default();
     let mut waveform_offset = 0.0;
 
-    eframe::run_simple_native("audio_demo", Default::default(), move |ctx, _frame| {
-        egui::CentralPanel::default().show(ctx, |ui| {
+    eframe::run_ui_native("audio_demo", Default::default(), move |ui, _frame| {
+        egui::CentralPanel::default().show_inside(ui, |ui| {
             ui.heading("Faders / Knobs");
             ui.horizontal(|ui| {
                 for (volume, _pan) in &mut faders {
