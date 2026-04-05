@@ -125,7 +125,14 @@ impl WaveformMarker {
 }
 
 #[derive(Debug, Clone, Copy)]
+pub struct WaveformClicked {
+    pub button: egui::PointerButton,
+    pub pos:    egui::Vec2,
+}
+
+#[derive(Debug, Clone, Copy)]
 pub struct WaveformDragged {
+    pub button: egui::PointerButton,
     pub start: egui::Vec2,
     pub current: egui::Vec2,
     pub frame_delta: egui::Vec2,
@@ -133,7 +140,7 @@ pub struct WaveformDragged {
 
 #[derive(Default, Clone, Copy)]
 pub struct WaveformResponse {
-    pub clicked: Option<egui::Vec2>,
+    pub clicked: Option<WaveformClicked>,
     pub dragged: Option<WaveformDragged>,
 }
 
@@ -298,18 +305,33 @@ impl<'a> Waveform<'a> {
         }
 
         let mut ret = WaveformResponse::default();
-        if response.clicked() {
+        if let Some(button) = [
+            egui::PointerButton::Primary,
+            egui::PointerButton::Secondary,
+            egui::PointerButton::Middle,
+        ]
+        .into_iter()
+        .find(|b| response.clicked_by(*b))
+        {
             if let Some(p) = response.interact_pointer_pos() {
                 let y = egui::remap(p.y, rect.y_range(), -1.0..=1.0);
                 let x = egui::remap(p.x, rect.x_range(), cursor.time_range_inclusive());
-                ret.clicked = Some(egui::vec2(x, y));
+                ret.clicked = Some(WaveformClicked {
+                    button,
+                    pos: egui::vec2(x, y),
+                });
             }
         }
-        if response.dragged_by(egui::PointerButton::Primary) {
+
+        if let Some(button) = [egui::PointerButton::Primary, egui::PointerButton::Secondary]
+            .into_iter()
+            .find(|b| response.dragged_by(*b))
+        {
             if let Some(current) = response.interact_pointer_pos() {
                 let start = current - response.total_drag_delta().unwrap_or(egui::Vec2::ZERO);
 
                 ret.dragged = Some(WaveformDragged {
+                    button,
                     start: egui::vec2(
                         egui::remap(start.x, rect.x_range(), cursor.time_range_inclusive()),
                         egui::remap(start.y, rect.y_range(), -1.0..=1.0),
