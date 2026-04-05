@@ -124,11 +124,17 @@ impl WaveformMarker {
     fn time_range(&self) -> std::ops::Range<f32> { self.start..self.end() }
 }
 
+#[derive(Debug, Clone, Copy)]
+pub struct WaveformDragged {
+    pub start: egui::Vec2,
+    pub current: egui::Vec2,
+    pub frame_delta: egui::Vec2,
+}
+
 #[derive(Default, Clone, Copy)]
 pub struct WaveformResponse {
     pub clicked: Option<egui::Vec2>,
-    pub dragged_to: Option<egui::Vec2>,
-    pub dragged_delta: Option<egui::Vec2>,
+    pub dragged: Option<WaveformDragged>,
 }
 
 pub struct Waveform<'a> {
@@ -300,14 +306,21 @@ impl<'a> Waveform<'a> {
             }
         }
         if response.dragged_by(egui::PointerButton::Primary) {
-            if let Some(p) = response.interact_pointer_pos() {
-                let y = egui::remap(p.y, rect.y_range(), -1.0..=1.0);
-                let x = egui::remap(p.x, rect.x_range(), cursor.time_range_inclusive());
-                ret.dragged_to = Some(egui::vec2(x, y));
-                ret.dragged_delta = Some(
-                    response.drag_delta() / rect.size()
+            if let Some(current) = response.interact_pointer_pos() {
+                let start = current - response.total_drag_delta().unwrap_or(egui::Vec2::ZERO);
+
+                ret.dragged = Some(WaveformDragged {
+                    start: egui::vec2(
+                        egui::remap(start.x, rect.x_range(), cursor.time_range_inclusive()),
+                        egui::remap(start.y, rect.y_range(), -1.0..=1.0),
+                    ),
+                    current: egui::vec2(
+                        egui::remap(current.x, rect.x_range(), cursor.time_range_inclusive()),
+                        egui::remap(current.y, rect.y_range(), -1.0..=1.0),
+                    ),
+                    frame_delta: response.drag_delta() / rect.size()
                         * vec2(1.0, cursor.time_range.end - cursor.time_range.start),
-                );
+                });
             }
         }
         egui::InnerResponse::new(ret, response)
