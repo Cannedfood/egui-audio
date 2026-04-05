@@ -267,6 +267,14 @@ impl<'a> Waveform<'a> {
             );
         }
 
+        // Draw marker backgrounds
+        for m in self.markers.iter() {
+            if cursor.overlaps(m.time_range()) {
+                let rect = cursor.time_range_rect(rect, m.time_range());
+                painter.rect_filled(rect, 0.0, m.fill);
+            }
+        }
+
         // Draw entry waveforms
         for e in self.data.iter() {
             if cursor.overlaps(e.time_range()) {
@@ -284,11 +292,10 @@ impl<'a> Waveform<'a> {
             }
         }
 
-        // Draw markers
+        // Draw marker start/end lines and text
         for m in self.markers.iter() {
             if cursor.overlaps(m.time_range()) {
                 let rect = cursor.time_range_rect(rect, m.time_range());
-                painter.rect_filled(rect, 0.0, m.fill);
                 painter.line_segment([rect.left_top(), rect.left_bottom()], m.stroke);
                 painter.line_segment([rect.right_top(), rect.right_bottom()], m.stroke);
 
