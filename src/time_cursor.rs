@@ -14,7 +14,7 @@ impl Default for TimeCursor {
     }
 }
 impl TimeCursor {
-    pub fn try_initialize(&mut self, range: Range<f32>) {
+    pub fn initialize_if_empty(&mut self, range: Range<f32>) {
         if self.time_range.is_empty() {
             self.time_range = range;
         }

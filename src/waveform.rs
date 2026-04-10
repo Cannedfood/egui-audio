@@ -227,13 +227,19 @@ impl<'a> Waveform<'a> {
 
         let mut fallback_cursor = TimeCursor::from(entries_range.clone());
         let cursor: &mut TimeCursor = self.cursor.unwrap_or(&mut fallback_cursor);
-        cursor.try_initialize(entries_range.clone());
+        cursor.initialize_if_empty(entries_range.clone());
 
         let (rect, response) = ui.allocate_at_least(
             egui::vec2(ui.available_width(), self.height),
             egui::Sense::click_and_drag(),
         );
         let painter = ui.painter_at(rect);
+
+        let delta = ui.input(|i| i.smooth_scroll_delta());
+        if delta != egui::Vec2::ZERO {
+            let dx = delta.x / rect.width() * (cursor.time_range.end - cursor.time_range.start);
+            cursor.shift(-dx);
+        }
 
         if response.dragged_by(egui::PointerButton::Middle) {
             let dx1 = ui.input(|i| i.pointer.delta().x);
