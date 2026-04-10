@@ -54,12 +54,17 @@ impl<'a> egui::Widget for Fader<'a> {
         ui.with_layout(egui::Layout::top_down_justified(egui::Align::Min), |ui| {
             ui.set_width(self.size.x);
 
+            let (rect, mut res) = ui.allocate_at_least(self.size, egui::Sense::click_and_drag());
+            let handle_height = 20.0;
+
+            if res.hovered() {
+                let zoom = ui.input(|i| i.zoom_delta());
+                *self.value *= zoom;
+            }
+
             if self.convert_to_db {
                 *self.value = to_db_deadzone(*self.value, *self.range.start());
             }
-
-            let (rect, mut res) = ui.allocate_at_least(self.size, egui::Sense::click_and_drag());
-            let handle_height = 20.0;
 
             // Handle input
             if res.double_clicked() {

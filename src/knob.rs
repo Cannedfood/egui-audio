@@ -51,6 +51,10 @@ impl<'a> egui::Widget for Knob<'a> {
                 egui::Sense::click_and_drag(),
             );
 
+            if res.hovered() {
+                *self.value *= ui.input(|i| i.zoom_delta());
+            }
+
             let visuals = ui.style().interact(&res);
 
             let offset_3d = egui::vec2(0.0, -2.0);
