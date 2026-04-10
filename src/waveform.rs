@@ -1,6 +1,7 @@
+use std::mem::take;
 use std::ops::Range;
 
-use egui::{remap, vec2, Modifiers};
+use egui::{Modifiers, remap, vec2};
 
 mod waveform_data;
 mod waveform_mipmap;
@@ -235,10 +236,24 @@ impl<'a> Waveform<'a> {
         );
         let painter = ui.painter_at(rect);
 
-        let delta = ui.input(|i| i.smooth_scroll_delta());
-        if delta != egui::Vec2::ZERO {
-            let dx = delta.x / rect.width() * (cursor.time_range.end - cursor.time_range.start);
+        if response.hovered() {
+            let scroll_delta = ui.input_mut(|i| take(&mut i.smooth_scroll_delta));
+
+            let dx =
+                scroll_delta.x / rect.width() * (cursor.time_range.end - cursor.time_range.start);
             cursor.shift(-dx);
+
+            if response.hovered()
+                && let Some(hover_pos) = ui.input(|i| i.pointer.hover_pos())
+            {
+                let zoom_delta = ui.input(|i| i.zoom_delta());
+
+                let zoom_target = remap(hover_pos.x, rect.x_range(), cursor.time_range_inclusive());
+                cursor.zoom_to(
+                    zoom_target,
+                    0.5f32.powf(-scroll_delta.y * 0.01) * zoom_delta,
+                );
+            }
         }
 
         if response.dragged_by(egui::PointerButton::Middle) {
@@ -325,38 +340,36 @@ impl<'a> Waveform<'a> {
         ]
         .into_iter()
         .find(|b| response.clicked_by(*b))
+            && let Some(p) = response.interact_pointer_pos()
         {
-            if let Some(p) = response.interact_pointer_pos() {
-                let y = egui::remap(p.y, rect.y_range(), -1.0..=1.0);
-                let x = egui::remap(p.x, rect.x_range(), cursor.time_range_inclusive());
-                ret.clicked = Some(WaveformClicked {
-                    button,
-                    pos: egui::vec2(x, y),
-                });
-            }
+            let y = egui::remap(p.y, rect.y_range(), -1.0..=1.0);
+            let x = egui::remap(p.x, rect.x_range(), cursor.time_range_inclusive());
+            ret.clicked = Some(WaveformClicked {
+                button,
+                pos: egui::vec2(x, y),
+            });
         }
 
         if let Some(button) = [egui::PointerButton::Primary, egui::PointerButton::Secondary]
             .into_iter()
             .find(|b| response.dragged_by(*b))
+            && let Some(current) = response.interact_pointer_pos()
         {
-            if let Some(current) = response.interact_pointer_pos() {
-                let start = current - response.total_drag_delta().unwrap_or(egui::Vec2::ZERO);
+            let start = current - response.total_drag_delta().unwrap_or(egui::Vec2::ZERO);
 
-                ret.dragged = Some(WaveformDragged {
-                    button,
-                    start: egui::vec2(
-                        egui::remap(start.x, rect.x_range(), cursor.time_range_inclusive()),
-                        egui::remap(start.y, rect.y_range(), -1.0..=1.0),
-                    ),
-                    current: egui::vec2(
-                        egui::remap(current.x, rect.x_range(), cursor.time_range_inclusive()),
-                        egui::remap(current.y, rect.y_range(), -1.0..=1.0),
-                    ),
-                    frame_delta: response.drag_delta() / rect.size()
-                        * vec2(1.0, cursor.time_range.end - cursor.time_range.start),
-                });
-            }
+            ret.dragged = Some(WaveformDragged {
+                button,
+                start: egui::vec2(
+                    egui::remap(start.x, rect.x_range(), cursor.time_range_inclusive()),
+                    egui::remap(start.y, rect.y_range(), -1.0..=1.0),
+                ),
+                current: egui::vec2(
+                    egui::remap(current.x, rect.x_range(), cursor.time_range_inclusive()),
+                    egui::remap(current.y, rect.y_range(), -1.0..=1.0),
+                ),
+                frame_delta: response.drag_delta() / rect.size()
+                    * vec2(1.0, cursor.time_range.end - cursor.time_range.start),
+            });
         }
         egui::InnerResponse::new(ret, response)
     }

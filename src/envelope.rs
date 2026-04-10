@@ -1,4 +1,4 @@
-use egui::{vec2, Widget};
+use egui::{Widget, vec2};
 
 #[derive(Clone, Debug)]
 pub struct ControlPoint {
@@ -86,10 +86,10 @@ impl<'a> Widget for Envelope<'a> {
                     .map(|(i, _)| i)
             });
 
-            if response.double_clicked() {
-                if let Some(closest) = closest_point {
-                    self.control_points[closest].reset();
-                }
+            if response.double_clicked()
+                && let Some(closest) = closest_point
+            {
+                self.control_points[closest].reset();
             }
 
             for (i, point) in self.control_points.iter_mut().enumerate() {

@@ -84,51 +84,33 @@ impl WaveformMipmap {
     }
 
     pub(crate) fn positive_peak_in_samples(data: &[f32]) -> (usize, f32) {
-        data.iter()
-            .enumerate()
-            .fold((0, f32::NEG_INFINITY), |acc, (i, &x)| {
-                if x > acc.1 {
-                    (i, x)
-                }
-                else {
-                    acc
-                }
-            })
+        data.iter().enumerate().fold(
+            (0, f32::NEG_INFINITY),
+            |acc, (i, &x)| {
+                if x > acc.1 { (i, x) } else { acc }
+            },
+        )
     }
 
     pub(crate) fn negative_peak_in_samples(data: &[f32]) -> (usize, f32) {
-        data.iter()
-            .enumerate()
-            .fold((0, f32::INFINITY), |acc, (i, &x)| {
-                if x < acc.1 {
-                    (i, x)
-                }
-                else {
-                    acc
-                }
-            })
+        data.iter().enumerate().fold(
+            (0, f32::INFINITY),
+            |acc, (i, &x)| {
+                if x < acc.1 { (i, x) } else { acc }
+            },
+        )
     }
 
     pub(crate) fn positive_peak_in_points(data: &[egui::Vec2]) -> egui::Vec2 {
         data.iter()
             .fold(egui::vec2(0.0, f32::NEG_INFINITY), |acc, &x| {
-                if x.y > acc.y {
-                    x
-                }
-                else {
-                    acc
-                }
+                if x.y > acc.y { x } else { acc }
             })
     }
 
     pub(crate) fn negative_peak_in_points(data: &[egui::Vec2]) -> egui::Vec2 {
         data.iter().fold(egui::vec2(0.0, f32::INFINITY), |acc, &x| {
-            if x.y < acc.y {
-                x
-            }
-            else {
-                acc
-            }
+            if x.y < acc.y { x } else { acc }
         })
     }
 
