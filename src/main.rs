@@ -18,49 +18,51 @@ fn main() {
 
     eframe::run_ui_native("audio_demo", Default::default(), move |ui, _frame| {
         egui::CentralPanel::default().show_inside(ui, |ui| {
-            ui.heading("Faders / Knobs");
-            ui.horizontal(|ui| {
-                for (volume, _pan) in &mut faders {
-                    ui.vertical(|ui| {
-                        ui.add(Knob::pan(_pan).label("pan"));
-                        ui.add(Fader::volume(volume).range(-32.0..=0.0).label("volume"));
-                    });
-                }
+            egui::ScrollArea::vertical().show(ui, |ui| {
+                ui.heading("Faders / Knobs");
+                ui.horizontal(|ui| {
+                    for (volume, _pan) in &mut faders {
+                        ui.vertical(|ui| {
+                            ui.add(Knob::pan(_pan).label("pan"));
+                            ui.add(Fader::volume(volume).range(-32.0..=0.0).label("volume"));
+                        });
+                    }
+                });
+                ui.heading("Envelope");
+                ui.add(egui_audio::Envelope::new(&mut control_points));
+                ui.heading("Waveform");
+                ui.label("offset");
+                ui.add(
+                    egui::DragValue::new(&mut waveform_offset)
+                        .range(-waveform.len_seconds()..=waveform.len_seconds())
+                        .speed(0.01)
+                        .suffix("s"),
+                );
+                egui_audio::Waveform::default()
+                    .entry(egui_audio::WaveformItem::new(&waveform).with_position(waveform_offset))
+                    .marker(
+                        egui_audio::WaveformMarker::from_range(0.0..1.0)
+                            .with_label("Red Marker")
+                            .with_color(egui::Color32::RED),
+                    )
+                    .marker(
+                        egui_audio::WaveformMarker::from_range(5.0..6.0)
+                            .with_label("Yellow Marker")
+                            .with_color(egui::Color32::YELLOW),
+                    )
+                    .marker(
+                        egui_audio::WaveformMarker::from_range(2.0..2.1)
+                            .with_label("Blue Marker")
+                            .with_color(egui::Color32::BLUE),
+                    )
+                    .marker(
+                        egui_audio::WaveformMarker::from_range(8.0..8.3)
+                            .with_label("Green Marker")
+                            .with_color(egui::Color32::GREEN),
+                    )
+                    .cursor(&mut cursor)
+                    .show(ui);
             });
-            ui.heading("Envelope");
-            ui.add(egui_audio::Envelope::new(&mut control_points));
-            ui.heading("Waveform");
-            ui.label("offset");
-            ui.add(
-                egui::DragValue::new(&mut waveform_offset)
-                    .range(-waveform.len_seconds()..=waveform.len_seconds())
-                    .speed(0.01)
-                    .suffix("s"),
-            );
-            egui_audio::Waveform::default()
-                .entry(egui_audio::WaveformItem::new(&waveform).with_position(waveform_offset))
-                .marker(
-                    egui_audio::WaveformMarker::from_range(0.0..1.0)
-                        .with_label("Red Marker")
-                        .with_color(egui::Color32::RED),
-                )
-                .marker(
-                    egui_audio::WaveformMarker::from_range(5.0..6.0)
-                        .with_label("Yellow Marker")
-                        .with_color(egui::Color32::YELLOW),
-                )
-                .marker(
-                    egui_audio::WaveformMarker::from_range(2.0..2.1)
-                        .with_label("Blue Marker")
-                        .with_color(egui::Color32::BLUE),
-                )
-                .marker(
-                    egui_audio::WaveformMarker::from_range(8.0..8.3)
-                        .with_label("Green Marker")
-                        .with_color(egui::Color32::GREEN),
-                )
-                .cursor(&mut cursor)
-                .show(ui);
         });
     })
     .expect("Failed to open window");
