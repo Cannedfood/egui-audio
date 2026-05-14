@@ -5,7 +5,14 @@ edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[[bin]]
+name = "egui-audio"
+required-features = ["demo"]
+
+[features]
+demo = ["dep:eframe"]
+
 [dependencies]
 atomic-traits = { version = "0.4.0", optional = true }
-eframe = "0.34"
+eframe = { version = "0.34", optional = true, default-features = false }
 egui = "0.34"
